@@ -1,89 +1,2328 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Welcome to Firebase Hosting</title>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<meta name="theme-color" content="#0d0d0f"/>
+<meta name="description" content="FairSplit – EEU Electricity Bill Splitter for shared meters in Ethiopia"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="FairSplit"/>
+<title>FairSplit – EEU Bill Splitter</title>
+<script type="module">
 
-    <!-- update the version number as needed -->
-    <script defer src="/__/firebase/12.13.0/firebase-app-compat.js"></script>
-    <!-- include only the Firebase features as you need -->
-    <script defer src="/__/firebase/12.13.0/firebase-auth-compat.js"></script>
-    <script defer src="/__/firebase/12.13.0/firebase-database-compat.js"></script>
-    <script defer src="/__/firebase/12.13.0/firebase-firestore-compat.js"></script>
-    <script defer src="/__/firebase/12.13.0/firebase-functions-compat.js"></script>
-    <script defer src="/__/firebase/12.13.0/firebase-messaging-compat.js"></script>
-    <script defer src="/__/firebase/12.13.0/firebase-storage-compat.js"></script>
-    <script defer src="/__/firebase/12.13.0/firebase-analytics-compat.js"></script>
-    <script defer src="/__/firebase/12.13.0/firebase-remote-config-compat.js"></script>
-    <script defer src="/__/firebase/12.13.0/firebase-performance-compat.js"></script>
-    <!-- 
-      initialize the SDK after all desired features are loaded, set useEmulator to false
-      to avoid connecting the SDK to running emulators.
-    -->
-    <script defer src="/__/firebase/init.js?useEmulator=true"></script>
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
-    <style media="screen">
-      body { background: #ECEFF1; color: rgba(0,0,0,0.87); font-family: Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; }
-      #message { background: white; max-width: 360px; margin: 100px auto 16px; padding: 32px 24px; border-radius: 3px; }
-      #message h2 { color: #ffa100; font-weight: bold; font-size: 16px; margin: 0 0 8px; }
-      #message h1 { font-size: 22px; font-weight: 300; color: rgba(0,0,0,0.6); margin: 0 0 16px;}
-      #message p { line-height: 140%; margin: 16px 0 24px; font-size: 14px; }
-      #message a { display: block; text-align: center; background: #039be5; text-transform: uppercase; text-decoration: none; color: white; padding: 16px; border-radius: 4px; }
-      #message, #message a { box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24); }
-      #load { color: rgba(0,0,0,0.4); text-align: center; font-size: 13px; }
-      @media (max-width: 600px) {
-        body, #message { margin-top: 0; background: white; box-shadow: none; }
-        body { border-top: 16px solid #ffa100; }
-      }
-    </style>
-  </head>
-  <body>
-    <div id="message">
-      <h2>Welcome</h2>
-      <h1>Firebase Hosting Setup Complete</h1>
-      <p>You're seeing this because you've successfully setup Firebase Hosting. Now it's time to go build something extraordinary!</p>
-      <a target="_blank" href="https://firebase.google.com/docs/hosting/">Open Hosting Documentation</a>
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  setDoc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyBAxUz2rycwz9aCVBTZ3OENwact4-C80hM",
+  authDomain: "fairsplit-d004b.firebaseapp.com",
+  projectId: "fairsplit-d004b",
+  storageBucket: "fairsplit-d004b.firebasestorage.app",
+  messagingSenderId: "110015012456",
+  appId: "1:110015012456:web:db99060646b8f7110da5dd",
+  measurementId: "G-3QJSXGNLKY"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+window.db = db;
+window.doc = doc;
+window.getDoc = getDoc;
+window.setDoc = setDoc;
+
+console.log("Firebase Connected Successfully");
+
+</script>
+<!-- Inline PWA Manifest via data: URI -->
+<link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiRmFpclNwbGl0IEVFVSBCaWxsIFNwbGl0dGVyIiwic2hvcnRfbmFtZSI6IkZhaXJTcGxpdCIsImRlc2NyaXB0aW9uIjoiRmFpcmx5IHNwbGl0IEVFVSBlbGVjdHJpY2l0eSBiaWxscyBhbW9uZyBtdWx0aXBsZSBob21lcyBpbiBFdGhpb3BpYSIsInN0YXJ0X3VybCI6Ii4iLCJkaXNwbGF5Ijoic3RhbmRhbG9uZSIsImJhY2tncm91bmRfY29sb3IiOiIjMGQwZDBmIiwidGhlbWVfY29sb3IiOiIjZjU5ZTBiIiwiaWNvbnMiOlt7InNyYyI6ImRhdGE6aW1hZ2Uvc3ZnK3htbDtiYXNlNjQsUEhOMlp5QjRiV3h1Y3owaWFIUjBjRG92TDNkM2R5NTNNeTV2Y21jdk1qQXdNQzl6ZG1jaUlIQnlaWE5sY25abFFYTndaV04wVW1GMGFXODlJbmhOYVc1WlRXbHVJRzFsWlhRaUlIWnBaWGRDYjNnOUlqQWdNQ0F6TWpBZ016SXdJajQ4Y21WamRDQjNhV1IwYUQwaU1qWXdJaUJvWldsbmFIUTlJakl3TUNJZ1ptbHNiRDBpSXpBd1pEQXdaak1pSUhOMGVXeGxQU0pqYjJ4dmNqb2paamM0YVRJd09pQm1NRFExSWk4K1BDOXlaV04wUGp3dmMzWm5QZz09Iiwic2l6ZXMiOiIxOTJ4MTkyIiwidHlwZSI6ImltYWdlL3N2Zyt4bWwifV19"/>
+
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+
+<!-- Apply saved theme before first paint to avoid flash -->
+<script>
+(function(){
+  try {
+    var t = localStorage.getItem('fs_theme');
+    if (t === 'light') {
+      document.documentElement.setAttribute('data-theme', 'light');
+      document.querySelector('meta[name="theme-color"]') &&
+        document.querySelector('meta[name="theme-color"]').setAttribute('content','#eeeef4');
+    }
+  } catch(e){}
+})();
+</script>
+
+<style>
+/* ═══════════════════════════════════════════
+   DARK THEME (default)
+═══════════════════════════════════════════ */
+:root {
+  /* Core backgrounds */
+  --bg-deep: #0a0a0c;
+  --bg-card: #111116;
+  --bg-card2: #16161e;
+  --bg-glass: rgba(20,20,28,0.85);
+  /* Header / tabs surface (with alpha for blur) */
+  --bg-header: rgba(10,10,12,0.93);
+  --bg-tabs: rgba(10,10,12,0.91);
+  /* Logo gradient */
+  --bg-logo-a: #1a1200;
+  --bg-logo-b: #2d1f00;
+  --logo-border: rgba(245,158,11,0.4);
+  /* Toast */
+  --bg-toast: rgba(18,18,24,0.97);
+  --shadow-toast: rgba(0,0,0,0.45);
+  /* Usage / chart track */
+  --bar-track: rgba(255,255,255,0.06);
+  /* Calc button text */
+  --btn-calc-text: #0c0c0e;
+  /* Ambient body glow */
+  --glow1: rgba(245,158,11,0.07);
+  --glow2: rgba(16,185,129,0.04);
+  /* Scrollbar */
+  --scrollbar-thumb: rgba(245,158,11,0.3);
+  /* Amber palette */
+  --amber: #f59e0b;
+  --amber-dark: #b45309;
+  --amber-light: #fcd34d;
+  --amber-glow: rgba(245,158,11,0.18);
+  --amber-glow2: rgba(245,158,11,0.08);
+  /* Status */
+  --green: #10b981;
+  --green-dark: #065f46;
+  --green-glow: rgba(16,185,129,0.2);
+  --red: #ef4444;
+  --red-glow: rgba(239,68,68,0.2);
+  --blue: #3b82f6;
+  /* Text */
+  --text-1: #f4f4f8;
+  --text-2: #a0a0b0;
+  --text-3: #606070;
+  /* Borders */
+  --border: rgba(255,255,255,0.07);
+  --border-amber: rgba(245,158,11,0.25);
+  /* Shape */
+  --radius: 18px;
+  --radius-sm: 12px;
+  --radius-xs: 8px;
+  /* Typography */
+  --font-head: 'Syne', sans-serif;
+  --font-mono: 'Space Mono', monospace;
+}
+
+/* ═══════════════════════════════════════════
+   LIGHT GRAY THEME
+═══════════════════════════════════════════ */
+html[data-theme="light"] {
+  --bg-deep: #e6e6ee;
+  --bg-card: #ededf4;
+  --bg-card2: #e0e0ea;
+  --bg-glass: rgba(237,237,244,0.92);
+  /* Header / tabs */
+  --bg-header: rgba(230,230,238,0.97);
+  --bg-tabs: rgba(230,230,238,0.97);
+  /* Logo */
+  --bg-logo-a: #fdf3dc;
+  --bg-logo-b: #fde68a;
+  --logo-border: rgba(180,83,9,0.40);
+  /* Toast */
+  --bg-toast: rgba(237,237,244,0.98);
+  --shadow-toast: rgba(0,0,0,0.20);
+  /* Chart tracks */
+  --bar-track: rgba(0,0,0,0.10);
+  /* Calc button text — white on amber gradient */
+  --btn-calc-text: #ffffff;
+  /* Ambient glows — kept subtle */
+  --glow1: rgba(180,83,9,0.07);
+  --glow2: rgba(5,150,105,0.04);
+  /* Scrollbar */
+  --scrollbar-thumb: rgba(180,83,9,0.30);
+  /* Amber — deeper for legibility on gray backgrounds */
+  --amber: #b45309;
+  --amber-dark: #7c2d12;
+  --amber-light: #d97706;
+  --amber-glow: rgba(180,83,9,0.13);
+  --amber-glow2: rgba(180,83,9,0.07);
+  /* Status */
+  --green: #047857;
+  --green-dark: #065f46;
+  --green-glow: rgba(4,120,87,0.14);
+  --red: #b91c1c;
+  --red-glow: rgba(185,28,28,0.12);
+  --blue: #1d4ed8;
+  /* Text — high contrast on gray */
+  --text-1: #0c0c16;
+  --text-2: #38384f;
+  --text-3: #72728a;
+  /* Borders — visible but not harsh */
+  --border: rgba(0,0,0,0.12);
+  --border-amber: rgba(180,83,9,0.28);
+}
+/* ═══════════════════════════════════════════
+   SMOOTH THEME TRANSITIONS
+   (only transitions properties that change; excludes
+    width/height to keep animations snappy)
+═══════════════════════════════════════════ */
+html.theme-transitioning *,
+html.theme-transitioning *::before,
+html.theme-transitioning *::after {
+  transition:
+    background-color 0.28s ease,
+    background 0.28s ease,
+    border-color 0.28s ease,
+    color 0.18s ease,
+    box-shadow 0.28s ease !important;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth;font-size:16px}
+body{
+  font-family:var(--font-head);
+  background:var(--bg-deep);
+  color:var(--text-1);
+  min-height:100vh;
+  width:100%;
+  margin:0;
+  position:relative;
+  overflow-x:hidden;
+  padding-bottom:40px;
+}
+body::before{
+  content:'';
+  position:fixed;
+  top:0;left:0;right:0;bottom:0;
+  background:
+    radial-gradient(ellipse 60% 40% at 20% 10%, var(--glow1) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 50% at 80% 90%, var(--glow2) 0%, transparent 60%);
+  pointer-events:none;z-index:0;
+}
+/* ──────── HEADER ──────── */
+.app-header{
+  position:sticky;top:0;z-index:100;
+  background:linear-gradient(135deg,#064e3b,#059669);
+  border-bottom:1px solid rgba(16,185,129,0.3);
+  padding:8px 16px;
+}
+.header-inner{display:flex;align-items:center;gap:10px}
+.logo-wrap{
+  width:32px;height:32px;flex-shrink:0;
+  background:rgba(0,0,0,0.2);
+  border:1.5px solid rgba(255,255,255,0.25);
+  border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;
+}
+.logo-wrap::after{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at 50% 50%,rgba(255,255,255,0.1),transparent 70%);
+  animation:pulseLogo 2.5s ease-in-out infinite;
+}
+@keyframes pulseLogo{0%,100%{opacity:.6}50%{opacity:1}}
+.logo-svg{width:18px;height:18px;position:relative;z-index:1}
+.header-text{flex:1;min-width:0}
+.header-title{font-size:1rem;font-weight:800;letter-spacing:-.02em;line-height:1;color:#fff}
+.header-title span{color:#6ee7b7}
+.header-sub{font-size:.55rem;color:rgba(255,255,255,0.6);letter-spacing:.08em;text-transform:uppercase;margin-top:1px;font-family:var(--font-mono)}
+.header-actions{display:flex;gap:6px;flex-shrink:0}
+.icon-btn{
+  width:30px;height:30px;border-radius:8px;
+  background:rgba(0,0,0,0.2);
+  border:1px solid rgba(255,255,255,0.2);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:all .2s;color:rgba(255,255,255,0.85);
+  -webkit-appearance:none;
+}
+.icon-btn:active{transform:scale(.93);background:rgba(0,0,0,0.35)}
+/* ──────── THEME TOGGLE ──────── */
+.theme-btn{
+  width:30px;height:30px;border-radius:8px;
+  background:rgba(0,0,0,0.2);
+  border:1px solid rgba(255,255,255,0.2);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:all .2s;color:rgba(255,255,255,0.85);
+  position:relative;overflow:hidden;
+  -webkit-appearance:none;
+}
+.theme-btn:active{transform:scale(.93)}
+.theme-btn .icon-dark,.theme-btn .icon-light{
+  position:absolute;transition:all .3s cubic-bezier(.34,1.56,.64,1);
+}
+html:not([data-theme="light"]) .theme-btn .icon-dark{opacity:1;transform:rotate(0deg) scale(1)}
+html:not([data-theme="light"]) .theme-btn .icon-light{opacity:0;transform:rotate(-90deg) scale(.5)}
+html[data-theme="light"] .theme-btn .icon-dark{opacity:0;transform:rotate(90deg) scale(.5)}
+html[data-theme="light"] .theme-btn .icon-light{opacity:1;transform:rotate(0deg) scale(1)}
+/* ──────── TABS ──────── */
+.tabs{
+  display:flex;padding:10px 16px 0;gap:4px;
+  position:sticky;top:49px;z-index:99;
+  background:var(--bg-tabs);backdrop-filter:blur(12px);
+}
+.tab-btn{
+  flex:1;padding:9px 4px;font-size:.7rem;font-weight:700;
+  letter-spacing:.05em;text-transform:uppercase;
+  border:none;background:transparent;color:var(--text-3);
+  cursor:pointer;border-radius:8px;transition:all .2s;
+  font-family:var(--font-head);position:relative;
+}
+.tab-btn.active{color:var(--amber);background:var(--amber-glow2)}
+.tab-btn.active::after{
+  content:'';position:absolute;bottom:-1px;left:20%;right:20%;
+  height:2px;background:var(--amber);border-radius:2px;
+}
+/* ──────── MAIN ──────── */
+main{padding:0 16px;position:relative;z-index:1}
+.section{display:none;padding-top:16px}
+.section.active{display:block;animation:fadeIn .25s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+/* ──────── CARDS ──────── */
+.card{
+  background:var(--bg-card);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:18px;
+  margin-bottom:14px;
+  position:relative;overflow:hidden;
+}
+.card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--border-amber),transparent);
+}
+.card-title{
+  font-size:.65rem;font-weight:700;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--amber);
+  margin-bottom:14px;display:flex;align-items:center;gap:6px;
+}
+.card-title svg{width:14px;height:14px}
+/* ──────── BILL INPUT ──────── */
+.bill-amount-wrap{
+  background:linear-gradient(135deg,var(--amber-glow),var(--amber-glow2));
+  border:1px solid var(--border-amber);
+  border-radius:var(--radius-sm);
+  padding:16px;
+  display:flex;align-items:center;gap:10px;
+}
+.bill-currency{
+  font-size:1.6rem;font-weight:800;color:var(--amber);
+  font-family:var(--font-mono);line-height:1;flex-shrink:0;
+}
+.bill-input{
+  flex:1;background:transparent;border:none;outline:none;
+  font-size:1.6rem;font-weight:700;color:var(--text-1);
+  font-family:var(--font-mono);min-width:0;
+  caret-color:var(--amber);
+}
+.bill-input::placeholder{color:var(--text-3)}
+.month-input-row{display:flex;gap:10px;margin-top:12px}
+.form-group{flex:1}
+.form-label{font-size:.62rem;color:var(--text-3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:5px;display:block}
+.form-input{
+  width:100%;background:var(--bg-card2);
+  border:1px solid var(--border);
+  border-radius:var(--radius-xs);
+  padding:10px 12px;color:var(--text-1);
+  font-family:var(--font-mono);font-size:.9rem;
+  outline:none;transition:border-color .2s;
+  -webkit-appearance:none;
+}
+.form-input:focus{border-color:var(--border-amber)}
+.form-input.error{border-color:var(--red)!important}
+.error-msg{color:var(--red);font-size:.62rem;margin-top:4px;display:none}
+.error-msg.show{display:block;animation:fadeIn .2s ease}
+/* ──────── LIVE STATS BAR ──────── */
+.live-stats{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;
+}
+.stat-pill{
+  background:var(--bg-card);border:1px solid var(--border);
+  border-radius:var(--radius-sm);padding:10px;text-align:center;
+}
+.stat-val{font-size:.95rem;font-weight:700;font-family:var(--font-mono);color:var(--amber);line-height:1}
+.stat-lbl{font-size:.55rem;color:var(--text-3);text-transform:uppercase;letter-spacing:.07em;margin-top:3px}
+/* ──────── HOME CARDS ──────── */
+.homes-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.homes-title{font-size:.65rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--amber)}
+.add-home-btn{
+  display:flex;align-items:center;gap:5px;
+  background:var(--green-glow);border:1px solid rgba(16,185,129,0.3);
+  color:var(--green);border-radius:20px;padding:6px 12px;
+  font-size:.7rem;font-weight:700;cursor:pointer;
+  transition:all .2s;font-family:var(--font-head);
+  letter-spacing:.05em;
+  animation:addHomePulse 2.4s ease-in-out infinite;
+  position:relative;
+}
+.add-home-btn::after{
+  content:'';position:absolute;inset:-2px;border-radius:22px;
+  border:1.5px solid rgba(16,185,129,0.5);
+  animation:addHomeRing 2.4s ease-in-out infinite;
+  pointer-events:none;
+}
+@keyframes addHomePulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(16,185,129,0.0);transform:scale(1)}
+  40%{box-shadow:0 0 10px 3px rgba(16,185,129,0.25);transform:scale(1.04)}
+  60%{box-shadow:0 0 6px 1px rgba(16,185,129,0.15);transform:scale(1.02)}
+}
+@keyframes addHomeRing{
+  0%,100%{opacity:0;transform:scale(1)}
+  40%{opacity:1;transform:scale(1.12)}
+  70%{opacity:0;transform:scale(1.22)}
+}
+.add-home-btn:active{transform:scale(.96)!important;animation:none;box-shadow:none;background:rgba(16,185,129,0.28)}
+.home-card{
+  background:var(--bg-card);border:1px solid var(--border);
+  border-radius:var(--radius);padding:16px;
+  margin-bottom:12px;position:relative;
+  animation:slideIn .3s ease;
+  transition:border-color .3s;
+}
+@keyframes slideIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:none}}
+/* ── Per-home border colour palette ── */
+.home-card.hue-0{border-color:rgba(59,130,246,0.55)}   /* blue    */
+.home-card.hue-1{border-color:rgba(16,185,129,0.55)}   /* green   */
+.home-card.hue-2{border-color:rgba(245,158,11,0.55)}   /* amber   */
+.home-card.hue-3{border-color:rgba(239,68,68,0.55)}    /* red     */
+.home-card.hue-4{border-color:rgba(168,85,247,0.55)}   /* purple  */
+.home-card.hue-5{border-color:rgba(236,72,153,0.55)}   /* pink    */
+.home-card.hue-6{border-color:rgba(20,184,166,0.55)}   /* teal    */
+.home-card.hue-7{border-color:rgba(251,146,60,0.55)}   /* orange  */
+.home-card.hue-8{border-color:rgba(234,179,8,0.55)}    /* yellow  */
+.home-card.hue-9{border-color:rgba(99,102,241,0.55)}   /* indigo  */
+.home-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2.5px;border-radius:var(--radius) var(--radius) 0 0;background:var(--card-accent,transparent)}
+.home-card.highest{border-color:rgba(245,158,11,0.4);background:linear-gradient(135deg,var(--amber-glow2),transparent)}
+.home-card.lowest{border-color:rgba(16,185,129,0.3)}
+.home-card-header{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.home-avatar{
+  width:38px;height:38px;border-radius:12px;flex-shrink:0;
+  background:linear-gradient(135deg,#1e3a5f,#2563eb);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1rem;font-weight:800;color:white;text-transform:uppercase;
+  border:1.5px solid rgba(37,99,235,0.45);
+  position:relative;
+}
+/* ── AVATAR PHOTO ── */
+.home-avatar{cursor:pointer;overflow:hidden}
+.home-avatar img{width:100%;height:100%;object-fit:cover;border-radius:inherit;display:block;position:relative;z-index:1}
+.avatar-cam-badge{
+  position:absolute;bottom:-3px;right:-3px;
+  width:17px;height:17px;border-radius:50%;
+  background:var(--amber);
+  display:flex;align-items:center;justify-content:center;
+  border:2px solid var(--bg-card);
+  z-index:3;pointer-events:none;
+  font-size:8px;line-height:1;
+}
+.home-avatar:active{opacity:.75;transform:scale(.95);}
+.home-avatar-initials{position:relative;z-index:1}
+.home-name-wrap{flex:1;min-width:0}
+.home-name{font-size:.95rem;font-weight:700;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.home-usage-text{font-size:.65rem;color:var(--text-3);margin-top:1px;font-family:var(--font-mono)}
+.home-card-actions{display:flex;gap:6px}
+.home-action-btn{
+  width:30px;height:30px;border-radius:8px;
+  border:1px solid var(--border);background:transparent;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;color:var(--text-3);transition:all .2s;
+}
+.home-action-btn:active{transform:scale(.9)}
+.home-action-btn.delete:active{background:var(--red-glow);color:var(--red);border-color:var(--red)}
+.home-action-btn.edit:active{background:var(--amber-glow);color:var(--amber);border-color:var(--amber-dark)}
+.readings-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.reading-group{}
+.reading-label{font-size:.55rem;color:var(--text-3);letter-spacing:.07em;text-transform:uppercase;margin-bottom:4px;display:flex;align-items:center;gap:4px}
+.reading-label-prev{color:var(--green)!important}
+.reading-label-curr{color:var(--amber)!important}
+.reading-input{
+  width:100%;background:var(--bg-card2);border:1px solid var(--border);
+  border-radius:var(--radius-xs);padding:9px 10px;
+  font-family:var(--font-mono);font-size:.88rem;color:var(--text-1);
+  outline:none;transition:border-color .2s;-webkit-appearance:none;
+}
+.reading-input:focus{border-color:var(--border-amber)}
+.reading-input.prev-input{color:var(--green)}
+.reading-input.prev-input:focus{border-color:var(--green)}
+.reading-input.prev-input::placeholder{color:rgba(16,185,129,0.35)}
+.reading-input:not(.prev-input):not([readonly]){color:var(--amber)}
+.reading-input:not(.prev-input):not([readonly])::placeholder{color:rgba(245,158,11,0.35)}
+.reading-input.error{border-color:var(--red)}
+.usage-bar-wrap{margin-top:8px}
+.usage-bar-header{display:flex;justify-content:space-between;margin-bottom:5px}
+.usage-kwh{font-size:.75rem;font-family:var(--font-mono);color:var(--text-2)}
+.usage-pct{font-size:.7rem;font-family:var(--font-mono);color:var(--amber);font-weight:700}
+.usage-bar{height:5px;background:var(--bar-track);border-radius:3px;overflow:hidden}
+.usage-bar-fill{height:100%;background:linear-gradient(90deg,var(--amber-dark),var(--amber));border-radius:3px;transition:width .5s cubic-bezier(.4,0,.2,1)}
+.home-amount{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-top:12px;padding-top:10px;border-top:1px solid var(--border);
+}
+.amount-label{font-size:.6rem;color:var(--text-3);text-transform:uppercase;letter-spacing:.08em}
+.amount-value{font-size:1.25rem;font-weight:800;font-family:var(--font-mono);color:var(--amber)}
+.amount-value .etb{font-size:.7rem;color:var(--amber-dark);margin-right:3px}
+
+/* ──────── LOCK SYSTEM ──────── */
+.home-action-btn.lock-btn{color:#2563eb;border-color:rgba(37,99,235,0.4);background:rgba(37,99,235,0.1);animation:lockWiggle 3s ease-in-out infinite}
+.home-action-btn.lock-btn:active{background:rgba(37,99,235,0.2);color:#2563eb;border-color:rgba(37,99,235,0.6);animation:none}
+@keyframes lockWiggle{
+  0%,100%{transform:rotate(0deg) scale(1)}
+  72%{transform:rotate(0deg) scale(1)}
+  75%{transform:rotate(-18deg) scale(1.15)}
+  78%{transform:rotate(14deg) scale(1.15)}
+  81%{transform:rotate(-10deg) scale(1.1)}
+  84%{transform:rotate(6deg) scale(1.05)}
+  87%{transform:rotate(0deg) scale(1)}
+}
+.home-action-btn.locked-btn{color:var(--red);border-color:rgba(239,68,68,0.4);background:var(--red-glow);animation:lockedPulse 2.6s ease-in-out infinite}
+.home-action-btn.locked-btn:active{background:rgba(239,68,68,0.25);animation:none}
+@keyframes lockedPulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,0.0)}
+  50%{box-shadow:0 0 7px 2px rgba(239,68,68,0.3)}
+}
+.home-card.card-locked{border-color:rgba(245,158,11,0.35)}
+.home-card.card-locked::before{background:linear-gradient(90deg,transparent,rgba(245,158,11,0.35),transparent)}
+.locked-chip{
+  display:inline-flex;align-items:center;gap:3px;
+  font-size:.48rem;background:var(--amber-glow);color:var(--amber);
+  border:1px solid var(--border-amber);border-radius:10px;
+  padding:2px 6px;font-weight:700;letter-spacing:.06em;
+  text-transform:uppercase;vertical-align:middle;margin-left:4px;
+}
+.reading-input[readonly]{
+  color:var(--green);background:rgba(16,185,129,0.04);
+  cursor:default;border-style:dashed;
+}
+.reading-label-locked{color:var(--green);opacity:.7}
+
+/* ──────── RESULTS SECTION ──────── */
+.result-card{
+  background:var(--bg-card);border:1px solid var(--border);
+  border-radius:var(--radius);padding:14px;margin-bottom:10px;
+  animation:fadeIn .3s ease;
+}
+.result-card.highest{border-left:3px solid var(--amber)}
+.result-card.lowest{border-left:3px solid var(--green)}
+.result-top{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.result-avatar{
+  width:34px;height:34px;border-radius:10px;
+  background:linear-gradient(135deg,#1e3a5f,#2563eb);
+  display:flex;align-items:center;justify-content:center;
+  font-weight:800;color:white;font-size:.85rem;flex-shrink:0;
+}
+.result-info{flex:1;min-width:0}
+.result-name{font-size:.9rem;font-weight:700;line-height:1}
+.result-sub{font-size:.62rem;color:var(--text-3);font-family:var(--font-mono);margin-top:1px}
+.result-amount{font-size:1.15rem;font-weight:800;font-family:var(--font-mono);color:var(--amber);text-align:right}
+.result-amount .etb{font-size:.6rem;color:var(--amber-dark);display:block;text-align:right;margin-bottom:1px}
+.result-bar{height:4px;background:var(--bar-track);border-radius:2px;overflow:hidden}
+.result-bar-fill{height:100%;background:linear-gradient(90deg,var(--amber-dark),var(--amber));border-radius:2px;transition:width .6s cubic-bezier(.4,0,.2,1)}
+/* ──────── SHARE BTNS ──────── */
+.action-btn{
+  flex:1;display:flex;align-items:center;justify-content:center;gap:6px;
+  padding:11px 8px;border-radius:var(--radius-sm);
+  font-size:.7rem;font-weight:700;letter-spacing:.05em;
+  cursor:pointer;font-family:var(--font-head);transition:all .2s;
+  border:1px solid var(--border);background:var(--bg-card2);color:var(--text-2);
+}
+.action-btn.primary{background:var(--amber-glow);border-color:var(--border-amber);color:var(--amber)}
+.action-btn:active{transform:scale(.96)}
+/* ──────── EMPTY STATE ──────── */
+.empty-state{
+  text-align:center;padding:40px 20px;color:var(--text-3);
+}
+.empty-state svg{margin-bottom:12px;opacity:.4}
+.empty-state p{font-size:.8rem;line-height:1.6}
+/* ──────── TOAST ──────── */
+#toast{
+  position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(20px);
+  background:var(--bg-toast);backdrop-filter:blur(16px);
+  border:1px solid var(--border-amber);
+  color:var(--text-1);padding:12px 20px;border-radius:30px;
+  font-size:.8rem;font-weight:600;white-space:nowrap;
+  opacity:0;transition:all .3s cubic-bezier(.4,0,.2,1);
+  pointer-events:none;z-index:9999;font-family:var(--font-head);
+  box-shadow:0 8px 32px var(--shadow-toast);
+}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+/* ──────── MODAL ──────── */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.7);
+  backdrop-filter:blur(8px);z-index:500;
+  display:flex;align-items:flex-end;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .25s;
+}
+.modal-overlay.show{opacity:1;pointer-events:all}
+.modal-sheet{
+  background:var(--bg-card);border:1px solid var(--border);
+  border-radius:var(--radius) var(--radius) 0 0;
+  padding:24px 20px;width:100%;max-width:480px;
+  transform:translateY(40px);transition:transform .3s cubic-bezier(.4,0,.2,1);
+}
+.modal-overlay.show .modal-sheet{transform:none}
+.modal-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 20px;cursor:pointer}
+.modal-title{font-size:1.1rem;font-weight:800;margin-bottom:6px}
+.modal-sub{font-size:.78rem;color:var(--text-3);margin-bottom:20px;line-height:1.5}
+.modal-actions{display:flex;gap:10px;margin-top:20px}
+.modal-btn{
+  flex:1;padding:13px;border-radius:var(--radius-sm);
+  font-size:.82rem;font-weight:700;cursor:pointer;
+  font-family:var(--font-head);letter-spacing:.03em;
+  border:1px solid var(--border);background:var(--bg-card2);color:var(--text-2);
+  transition:all .2s;
+}
+.modal-btn.danger{background:var(--red-glow);border-color:rgba(239,68,68,.3);color:var(--red)}
+.modal-btn.confirm{background:var(--amber-glow);border-color:var(--border-amber);color:var(--amber)}
+.modal-btn:active{transform:scale(.97)}
+/* ──────── HOME EDIT MODAL ──────── */
+.modal-input{
+  width:100%;background:var(--bg-card2);border:1px solid var(--border);
+  border-radius:var(--radius-xs);padding:11px 14px;
+  font-family:var(--font-head);font-size:.9rem;color:var(--text-1);
+  outline:none;margin-bottom:12px;transition:border-color .2s;
+  -webkit-appearance:none;
+}
+.modal-input:focus{border-color:var(--border-amber)}
+/* ──────── CALC ACTION ──────── */
+.calc-btn{
+  width:100%;padding:16px;margin:6px 0 14px;
+  background:linear-gradient(135deg,var(--amber-dark),var(--amber));
+  border:none;border-radius:var(--radius-sm);
+  color:var(--btn-calc-text);font-size:.9rem;font-weight:800;
+  cursor:pointer;letter-spacing:.05em;
+  font-family:var(--font-head);
+  box-shadow:0 4px 20px var(--amber-glow);
+  transition:all .2s;position:relative;overflow:hidden;
+}
+.calc-btn::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,.15),transparent);
+}
+.calc-btn:active{transform:scale(.98);box-shadow:0 2px 10px rgba(245,158,11,0.2)}
+/* ──────── COPY BUTTON ANIMATION ──────── */
+@keyframes copyPop{
+  0%{transform:scale(1)}
+  25%{transform:scale(.93)}
+  55%{transform:scale(1.05)}
+  80%{transform:scale(.98)}
+  100%{transform:scale(1)}
+}
+@keyframes copyRipple{
+  0%{opacity:.5;transform:scale(.6)}
+  100%{opacity:0;transform:scale(2.2)}
+}
+.copy-btn-anim{
+  position:relative;overflow:hidden;
+  animation:copyPop .45s cubic-bezier(.34,1.56,.64,1) forwards;
+}
+.copy-btn-anim::after{
+  content:'';position:absolute;inset:0;border-radius:inherit;
+  background:var(--green-glow);
+  animation:copyRipple .5s ease forwards;
+  pointer-events:none;
+}
+
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--scrollbar-thumb);border-radius:2px}
+/* ──────── MISC ──────── */
+.badge{
+  display:inline-flex;align-items:center;gap:3px;
+  padding:2px 7px;border-radius:20px;font-size:.55rem;font-weight:700;
+  text-transform:uppercase;letter-spacing:.07em;
+}
+.badge.high{background:var(--amber-glow);color:var(--amber);border:1px solid var(--border-amber)}
+.badge.low{background:var(--green-glow);color:var(--green);border:1px solid rgba(16,185,129,.25)}
+.no-homes{
+  text-align:center;padding:32px 16px;
+  background:var(--bg-card);border:1px dashed var(--border);
+  border-radius:var(--radius);margin-bottom:14px;color:var(--text-3);
+  font-size:.8rem;line-height:1.7;
+}
+.no-homes svg{margin-bottom:10px;opacity:.3}
+</style>
+</head>
+<body>
+  <div id="registerScreen" style="
+position:fixed;
+inset:0;
+background:#0d0d0f;
+z-index:99999;
+display:flex;
+align-items:center;
+justify-content:center;
+padding:20px;
+font-family:sans-serif;
+">
+
+<div style="
+width:100%;
+max-width:350px;
+background:#1a1a1d;
+padding:24px;
+border-radius:18px;
+box-shadow:0 0 20px rgba(0,0,0,.4);
+">
+
+<h2 style="color:white;text-align:center;margin-bottom:20px;">
+FairSplit Registration
+</h2>
+
+<input
+id="phoneInput"
+type="tel"
+placeholder="+251912345678"
+style="
+width:100%;
+padding:14px;
+border:none;
+border-radius:12px;
+margin-bottom:15px;
+font-size:16px;
+"
+/>
+
+<button
+id="registerBtn"
+style="
+width:100%;
+padding:14px;
+border:none;
+border-radius:12px;
+background:#16a34a;
+color:white;
+font-size:16px;
+font-weight:bold;
+cursor:pointer;
+">
+Register
+</button>
+
+<p id="registerMsg" style="
+text-align:center;
+margin-top:15px;
+font-size:14px;
+font-weight:600;
+min-height:20px;
+transition:color 0.2s;
+"></p>
+
+<p style="
+color:#888;
+text-align:center;
+margin-top:12px;
+font-size:13px;
+line-height:1.5;
+">
+To activate contact <strong style="color:#f59e0b">0799217580</strong>
+</p>
+
+</div>
+</div>
+
+<!-- ───── LOADING OVERLAY ───── -->
+<div id="loadingOverlay" style="
+  position:fixed;inset:0;z-index:999999;
+  background:#0a0a0c;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:20px;
+  font-family:'Syne',sans-serif;
+  transition:opacity .4s ease;
+">
+  <!-- Logo -->
+  <div style="
+    width:64px;height:64px;border-radius:20px;
+    background:linear-gradient(135deg,#1a1200,#2d1f00);
+    border:1.5px solid rgba(245,158,11,0.4);
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 0 30px rgba(245,158,11,0.2);
+    animation:loadPulse 1.8s ease-in-out infinite;
+  ">
+    <svg width="34" height="34" viewBox="0 0 32 32" fill="none">
+      <path d="M18 4L6 18H16L14 28L26 14H16L18 4Z" fill="#f59e0b" stroke="#fcd34d" stroke-width=".5" stroke-linejoin="round"/>
+    </svg>
+  </div>
+  <!-- App name -->
+  <div style="text-align:center;line-height:1.2">
+    <div style="font-size:1.4rem;font-weight:800;color:#f4f4f8;letter-spacing:-.02em">
+      Fair<span style="color:#f59e0b">Split</span>
     </div>
-    <p id="load">Firebase SDK Loading&hellip;</p>
+    <div style="font-size:.6rem;color:#606070;letter-spacing:.12em;text-transform:uppercase;margin-top:3px;font-family:'Space Mono',monospace">
+      EEU Bill Splitter
+    </div>
+  </div>
+  <!-- Spinner -->
+  <div style="position:relative;width:40px;height:40px">
+    <svg width="40" height="40" viewBox="0 0 40 40" fill="none" style="animation:loadSpin 1s linear infinite">
+      <circle cx="20" cy="20" r="16" stroke="rgba(245,158,11,0.15)" stroke-width="3"/>
+      <path d="M20 4 A16 16 0 0 1 36 20" stroke="#f59e0b" stroke-width="3" stroke-linecap="round"/>
+    </svg>
+  </div>
+  <!-- Status text -->
+  <div id="loadingMsg" style="
+    font-size:.72rem;color:#606070;letter-spacing:.06em;
+    text-transform:uppercase;font-family:'Space Mono',monospace;
+  ">Connecting…</div>
+</div>
 
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        const loadEl = document.querySelector('#load');
-        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
-        // // The Firebase SDK is initialized and available here!
-        //
-        // firebase.auth().onAuthStateChanged(user => { });
-        // firebase.database().ref('/path/to/ref').on('value', snapshot => { });
-        // firebase.firestore().doc('/foo/bar').get().then(() => { });
-        // firebase.functions().httpsCallable('yourFunction')().then(() => { });
-        // firebase.messaging().requestPermission().then(() => { });
-        // firebase.storage().ref('/path/to/ref').getDownloadURL().then(() => { });
-        // firebase.analytics(); // call to activate
-        // firebase.analytics().logEvent('tutorial_completed');
-        // firebase.performance(); // call to activate
-        //
-        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
+<style>
+@keyframes loadPulse{0%,100%{box-shadow:0 0 20px rgba(245,158,11,0.15)}50%{box-shadow:0 0 35px rgba(245,158,11,0.35)}}
+@keyframes loadSpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+</style>
 
-        try {
-          let app = firebase.app();
-          let features = [
-            'auth', 
-            'database', 
-            'firestore',
-            'functions',
-            'messaging', 
-            'storage', 
-            'analytics', 
-            'remoteConfig',
-            'performance',
-          ].filter(feature => typeof app[feature] === 'function');
-          loadEl.textContent = `Firebase SDK loaded with ${features.join(', ')}`;
-        } catch (e) {
-          console.error(e);
-          loadEl.textContent = 'Error loading the Firebase SDK, check the console.';
-        }
+<!-- ───── TRIAL POPUP ───── -->
+<div id="trialPopup" style="
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:99998;
+  background:rgba(0,0,0,0.6);
+  backdrop-filter:blur(6px);
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  font-family:sans-serif;
+">
+  <div style="
+    width:100%;
+    max-width:320px;
+    background:#1a1a1d;
+    border:1px solid rgba(245,158,11,0.35);
+    border-radius:20px;
+    padding:28px 22px 22px;
+    box-shadow:0 0 40px rgba(245,158,11,0.15);
+    text-align:center;
+    animation:trialPopIn .35s cubic-bezier(.34,1.56,.64,1);
+  ">
+    <div id="trialPopupIcon" style="font-size:2.4rem;margin-bottom:10px">⏳</div>
+    <div id="trialPopupTitle" style="
+      color:#f59e0b;font-size:1rem;font-weight:800;
+      letter-spacing:.04em;margin-bottom:6px;
+    ">Trial Active</div>
+    <div id="trialPopupDays" style="
+      color:#f4f4f8;font-size:2rem;font-weight:800;
+      font-family:monospace;margin:10px 0 4px;
+    ">—</div>
+    <div id="trialPopupSub" style="
+      color:#a0a0b0;font-size:.78rem;line-height:1.5;margin-bottom:18px;
+    ">days remaining in your trial</div>
+    <button onclick="document.getElementById('trialPopup').style.display='none'" style="
+      width:100%;padding:12px;border:none;border-radius:12px;
+      background:linear-gradient(135deg,#b45309,#f59e0b);
+      color:#0c0c0e;font-size:.9rem;font-weight:800;
+      cursor:pointer;letter-spacing:.04em;
+    ">Got It</button>
+  </div>
+</div>
+<style>
+@keyframes trialPopIn{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
+</style>
+
+<!-- ───── HEADER ───── -->
+<header class="app-header">
+  <div class="header-inner">
+    <div class="logo-wrap">
+      <svg class="logo-svg" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M18 4L6 18H16L14 28L26 14H16L18 4Z" fill="#f59e0b" stroke="#fcd34d" stroke-width=".5" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="header-text">
+      <div class="header-title">Fair<span>Split</span></div>
+      <div class="header-sub">EEU Bill Splitter</div>
+    </div>
+    <div class="header-actions">
+      <button class="icon-btn" onclick="openModal('aboutModal')" title="About FairSplit">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      </button>
+      <button class="theme-btn" onclick="toggleTheme()" id="themeBtn" title="Toggle theme" aria-label="Toggle light/dark theme">
+        <!-- Moon icon — shown in dark mode -->
+        <svg class="icon-dark" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+        <!-- Sun icon — shown in light mode -->
+        <svg class="icon-light" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="5"/>
+          <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+          <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+        </svg>
+      </button>
+      <button class="icon-btn" onclick="openResetModal()" title="Reset">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.55"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ───── TABS ───── -->
+<nav class="tabs" id="tabs">
+  <button class="tab-btn active" onclick="switchTab('input',this)">Input</button>
+  <button class="tab-btn" onclick="switchTab('results',this)">Results</button>
+</nav>
+
+<!-- ───── OFFLINE BANNER ───── -->
+<div id="offlineBanner" style="
+  display:none;
+  margin:10px 16px 0;
+  padding:10px 14px;
+  background:linear-gradient(135deg,rgba(59,130,246,0.15),rgba(59,130,246,0.08));
+  border:1px solid rgba(59,130,246,0.35);
+  border-radius:12px;
+  font-size:.72rem;
+  font-family:'Space Mono',monospace;
+  color:#93c5fd;
+  align-items:center;
+  gap:10px;
+  animation:fadeIn .3s ease;
+">
+  <span style="font-size:1rem;flex-shrink:0">📶</span>
+  <div style="flex:1;min-width:0">
+    <div style="font-weight:700;letter-spacing:.04em">YOU ARE OFFLINE</div>
+    <div id="offlineBannerSub" style="color:#60a5fa;margin-top:2px;font-size:.65rem">Grace period active — connect within 7 days</div>
+  </div>
+  <div id="offlineGraceBadge" style="
+    background:rgba(59,130,246,0.2);
+    border:1px solid rgba(59,130,246,0.4);
+    border-radius:20px;padding:3px 9px;
+    font-size:.65rem;font-weight:700;
+    white-space:nowrap;color:#93c5fd;flex-shrink:0;
+  ">— days left</div>
+</div>
+
+<main>
+
+<!-- ═══════════ INPUT TAB ═══════════ -->
+<section class="section active" id="sec-input">
+
+  <!-- Bill Amount -->
+  <div class="card">
+    <div class="card-title">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+      Total EEU Bill
+    </div>
+    <div class="bill-amount-wrap">
+      <span class="bill-currency">ETB</span>
+      <input class="bill-input" type="number" id="totalBill" placeholder="0.00" min="0" step="0.01" inputmode="decimal" oninput="onBillChange()"/>
+    </div>
+    <div class="month-input-row">
+      <div class="form-group">
+        <label class="form-label">📅 Billing Month</label>
+        <input class="form-input" type="month" id="billingMonth" oninput="saveState()"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">📝 Notes</label>
+        <input class="form-input" type="text" id="billingNote" placeholder="Optional note" oninput="saveState()"/>
+      </div>
+    </div>
+    <div id="billError" class="error-msg">⚠ Please enter a valid bill amount</div>
+  </div>
+
+  <!-- Live Stats -->
+  <div class="live-stats" style="grid-template-columns:repeat(2,1fr)">
+    <div class="stat-pill">
+      <div class="stat-val" id="liveKwh">0</div>
+      <div class="stat-lbl">Total kWh</div>
+    </div>
+    <div class="stat-pill">
+      <div class="stat-val" id="liveHomes">0</div>
+      <div class="stat-lbl">Homes</div>
+    </div>
+  </div>
+
+  <!-- Homes -->
+  <div class="homes-header">
+    <div class="homes-title">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="display:inline;vertical-align:middle;margin-right:4px"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/></svg>
+      Homes / Sub-Meters
+    </div>
+    <button class="add-home-btn" onclick="addHome()">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Add Home
+    </button>
+  </div>
+  <div id="homesList"></div>
+
+  <button class="calc-btn" onclick="calculate()">⚡ Calculate Fair Split</button>
+
+</section>
+
+<!-- ═══════════ RESULTS TAB ═══════════ -->
+<section class="section" id="sec-results">
+
+  <button class="action-btn primary" onclick="copyResults()" style="
+    width:100%;justify-content:center;gap:8px;
+    padding:14px;margin-bottom:14px;
+    border-radius:var(--radius-sm);
+    font-size:.88rem;font-weight:800;
+    letter-spacing:.05em;cursor:pointer;
+    font-family:var(--font-head);transition:all .2s;
+  ">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+    Copy Results
+  </button>
+
+  <div id="resultsList">
+    <div class="empty-state">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+      <p>Enter bill details and tap<br/><strong>Calculate Fair Split</strong><br/>to see results</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ───── TOAST ───── -->
+<div id="toast"></div>
+
+<!-- ───── MODALS ───── -->
+<!-- About Modal -->
+<div class="modal-overlay" id="aboutModal" style="align-items:flex-end">
+  <div class="modal-sheet" style="padding:0;overflow:hidden;max-height:88vh;display:flex;flex-direction:column">
+    <div class="modal-handle" onclick="closeModal('aboutModal')" style="margin:14px auto 6px;flex-shrink:0"></div>
+
+    <!-- Scrollable content -->
+    <div style="overflow-y:auto;-webkit-overflow-scrolling:touch;flex:1">
+
+    <!-- Header banner -->
+    <div style="
+      background:linear-gradient(135deg,var(--amber-dark),var(--amber));
+      padding:20px 22px 18px;
+      display:flex;align-items:center;gap:14px;
+      margin-top:6px;
+    ">
+      <div style="
+        width:48px;height:48px;border-radius:14px;
+        background:rgba(0,0,0,0.2);
+        display:flex;align-items:center;justify-content:center;
+        flex-shrink:0;
+      ">
+        <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+          <path d="M18 4L6 18H16L14 28L26 14H16L18 4Z" fill="white" stroke="rgba(255,255,255,0.6)" stroke-width=".5" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div>
+        <div style="font-size:1.2rem;font-weight:800;color:#0c0c0e;letter-spacing:-.02em">FairSplit</div>
+        <div style="font-size:.65rem;color:rgba(0,0,0,0.55);letter-spacing:.1em;text-transform:uppercase;font-family:var(--font-mono)">EEU Bill Splitter · v1.0</div>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div style="padding:20px 22px;display:flex;flex-direction:column;gap:12px">
+
+      <!-- What is FairSplit -->
+      <div style="background:var(--bg-card2);border:1px solid var(--border);border-radius:14px;padding:14px">
+        <div style="font-size:.58rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--amber);margin-bottom:8px">⚡ What is FairSplit?</div>
+        <div style="font-size:.8rem;color:var(--text-2);line-height:1.7">
+          FairSplit helps households sharing a single EEU electricity meter split the monthly bill <strong style="color:var(--text-1)">fairly and accurately</strong> — based on each home's actual kWh consumption, not a flat split.
+        </div>
+      </div>
+
+      <!-- How it works -->
+      <div style="background:var(--bg-card2);border:1px solid var(--border);border-radius:14px;padding:14px">
+        <div style="font-size:.58rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--amber);margin-bottom:12px">📋 How It Works</div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+
+          <div style="display:flex;gap:12px;align-items:flex-start">
+            <span style="background:var(--amber-glow);color:var(--amber);border-radius:50%;width:24px;height:24px;min-width:24px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.68rem;border:1px solid var(--border-amber)">1</span>
+            <div>
+              <div style="font-size:.8rem;font-weight:700;color:var(--text-1);margin-bottom:2px">Enter the Total Bill</div>
+              <div style="font-size:.73rem;color:var(--text-3);line-height:1.6">Type the full EEU bill amount for the billing month.</div>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:12px;align-items:flex-start">
+            <span style="background:var(--amber-glow);color:var(--amber);border-radius:50%;width:24px;height:24px;min-width:24px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.68rem;border:1px solid var(--border-amber)">2</span>
+            <div>
+              <div style="font-size:.8rem;font-weight:700;color:var(--text-1);margin-bottom:2px">Add Each Home</div>
+              <div style="font-size:.73rem;color:var(--text-3);line-height:1.6">Add every sub-meter with its previous and current kWh readings.</div>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:12px;align-items:flex-start">
+            <span style="background:var(--amber-glow);color:var(--amber);border-radius:50%;width:24px;height:24px;min-width:24px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.68rem;border:1px solid var(--border-amber)">3</span>
+            <div>
+              <div style="font-size:.8rem;font-weight:700;color:var(--text-1);margin-bottom:2px">Calculate Fair Split</div>
+              <div style="font-size:.73rem;color:var(--text-3);line-height:1.6">Tap the button — each home pays exactly for what they consumed.</div>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:12px;align-items:flex-start">
+            <span style="background:var(--amber-glow);color:var(--amber);border-radius:50%;width:24px;height:24px;min-width:24px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.68rem;border:1px solid var(--border-amber)">4</span>
+            <div>
+              <div style="font-size:.8rem;font-weight:700;color:var(--text-1);margin-bottom:2px">Copy & Share</div>
+              <div style="font-size:.73rem;color:var(--text-3);line-height:1.6">Copy the results and send via WhatsApp or Telegram in one tap.</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Key features -->
+      <div style="background:var(--bg-card2);border:1px solid var(--border);border-radius:14px;padding:14px">
+        <div style="font-size:.58rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--amber);margin-bottom:10px">✨ Key Features</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div style="font-size:.72rem;color:var(--text-2);display:flex;align-items:center;gap:6px"><span>🏠</span> Up to 10 homes</div>
+          <div style="font-size:.72rem;color:var(--text-2);display:flex;align-items:center;gap:6px"><span>📋</span> One-tap copy</div>
+          <div style="font-size:.72rem;color:var(--text-2);display:flex;align-items:center;gap:6px"><span>📶</span> Works offline</div>
+          <div style="font-size:.72rem;color:var(--text-2);display:flex;align-items:center;gap:6px"><span>🔒</span> Lock readings</div>
+          <div style="font-size:.72rem;color:var(--text-2);display:flex;align-items:center;gap:6px"><span>🌙</span> Dark & light mode</div>
+          <div style="font-size:.72rem;color:var(--text-2);display:flex;align-items:center;gap:6px"><span>💾</span> Auto-saves state</div>
+        </div>
+      </div>
+
+      <!-- Developer -->
+      <div style="background:var(--bg-card2);border:1px solid var(--border);border-radius:14px;padding:14px;display:flex;align-items:center;justify-content:space-between">
+        <div>
+          <div style="font-size:.58rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text-3);margin-bottom:3px">Developer</div>
+          <div style="font-size:.85rem;font-weight:700;color:var(--text-1)">FairSplitTeam</div>
+          <div style="font-size:.7rem;color:var(--amber);font-family:var(--font-mono);margin-top:2px">0799217580</div>
+        </div>
+        <div style="font-size:2rem">👨‍💻</div>
+      </div>
+
+      <button class="modal-btn confirm" onclick="closeModal('aboutModal')" style="width:100%;margin-top:4px">
+        Got It
+      </button>
+    </div>
+    </div><!-- end scrollable -->
+  </div>
+</div>
+<div class="modal-overlay" id="resetModal">
+  <div class="modal-sheet">
+    <div class="modal-handle" onclick="closeModal('resetModal')"></div>
+    <div class="modal-title">Reset Everything?</div>
+    <div class="modal-sub">This will clear all homes, readings, and the current bill. Your billing history will be preserved. This action cannot be undone.</div>
+    <div class="modal-actions">
+      <button class="modal-btn" onclick="closeModal('resetModal')">Cancel</button>
+      <button class="modal-btn danger" onclick="resetAll()">Reset</button>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Home Modal -->
+<div class="modal-overlay" id="deleteHomeModal">
+  <div class="modal-sheet">
+    <div class="modal-handle" onclick="closeModal('deleteHomeModal')"></div>
+    <div class="modal-title">Remove Home?</div>
+    <div class="modal-sub" id="deleteHomeMsg">Remove this home from the list?</div>
+    <div class="modal-actions">
+      <button class="modal-btn" onclick="closeModal('deleteHomeModal')">Cancel</button>
+      <button class="modal-btn danger" onclick="confirmDeleteHome()">Remove</button>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Home Modal -->
+<div class="modal-overlay" id="editHomeModal">
+  <div class="modal-sheet">
+    <div class="modal-handle" onclick="closeModal('editHomeModal')"></div>
+    <div class="modal-title">Edit Home</div>
+    <input class="modal-input" type="text" id="editHomeName" placeholder="Home name (e.g. House 1)" maxlength="30"/>
+    <div class="modal-actions">
+      <button class="modal-btn" onclick="closeModal('editHomeModal')">Cancel</button>
+      <button class="modal-btn confirm" onclick="confirmEditHome()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Previous Data Warning Modal -->
+<div class="modal-overlay" id="editPrevDataModal">
+  <div class="modal-sheet">
+    <div class="modal-handle" onclick="cancelEditPrevData()"></div>
+    <div class="modal-title" style="display:flex;align-items:center;gap:8px">
+      <span style="font-size:1.3rem">⚠️</span> Edit Previous Data?
+    </div>
+    <div class="modal-sub" id="editPrevDataMsg">This field already has saved data. Changing it may affect your billing calculations.</div>
+    <div class="modal-actions">
+      <button class="modal-btn" onclick="cancelEditPrevData()">Cancel</button>
+      <button class="modal-btn danger" onclick="confirmEditPrevData()">Edit Anyway</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─────────────────────────────────────────────
+// STATE
+// ─────────────────────────────────────────────
+let homes = [];
+let lastCalcResults = null;
+let deleteTargetId = null;
+let editTargetId = null;
+let homeIdCounter = 0;
+let editPrevDataCallback = null;
+let editPrevDataCancelCallback = null;
+const prevReadingEditConfirmed = new Set();
+
+const DEFAULT_HOME_NAMES = [
+  'House 1','House 2','House 3','House 4','House 5',
+  'House 6','House 7','House 8','House 9','House 10'
+];
+
+// ─────────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  loadState();
+  // Set default billing month to current month
+  if (!document.getElementById('billingMonth').value) {
+    const now = new Date();
+    const yr = now.getFullYear();
+    const mo = String(now.getMonth()+1).padStart(2,'0');
+    document.getElementById('billingMonth').value = `${yr}-${mo}`;
+  }
+  renderHomes();
+  updateLiveStats();
+  registerSW();
+});
+
+// ─────────────────────────────────────────────
+// PWA / SERVICE WORKER (inline blob)
+// ─────────────────────────────────────────────
+function registerSW() {
+  if (!('serviceWorker' in navigator)) return;
+
+  const swCode = `
+    const CACHE = 'fairsplit-v2';
+
+    self.addEventListener('install', event => {
+      self.skipWaiting();
+
+      event.waitUntil(
+        caches.open(CACHE).then(cache => {
+          return cache.addAll([
+            './',
+            './index.html',
+            './manifest.json'
+          ]);
+        })
+      );
+    });
+
+    self.addEventListener('activate', event => {
+      self.clients.claim();
+
+      event.waitUntil(
+        caches.keys().then(keys => {
+          return Promise.all(
+            keys.map(key => {
+              if (key !== CACHE) {
+                return caches.delete(key);
+              }
+            })
+          );
+        })
+      );
+    });
+
+    self.addEventListener('fetch', event => {
+      event.respondWith(
+        fetch(event.request)
+          .then(response => {
+            return response;
+          })
+          .catch(() => {
+            return caches.match(event.request);
+          })
+      );
+    });
+  `;
+
+  const blob = new Blob([swCode], {
+    type: 'application/javascript'
+  });
+
+  const url = URL.createObjectURL(blob);
+
+  navigator.serviceWorker.register(url)
+    .then(() => console.log('SW Registered'))
+    .catch(err => console.log(err));
+}
+
+// ─────────────────────────────────────────────
+// TAB SWITCHING
+// ─────────────────────────────────────────────
+function switchTab(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('sec-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ─────────────────────────────────────────────
+// HOME MANAGEMENT
+// ─────────────────────────────────────────────
+function addHome() {
+  if (homes.length >= 10) { showToast('⚡ Maximum 10 homes allowed'); return; }
+  const name = DEFAULT_HOME_NAMES[homes.length] || `House ${homes.length+1}`;
+  homes.push({
+    id: ++homeIdCounter,
+    name,
+    prevReading: '',
+    currReading: '',
+    locked: false,
+  });
+  saveState();
+  renderHomes();
+  updateLiveStats();
+  // scroll to new
+  setTimeout(() => {
+    const cards = document.querySelectorAll('.home-card');
+    if (cards.length) cards[cards.length-1].scrollIntoView({behavior:'smooth',block:'center'});
+  },100);
+}
+
+function removeHome(id) {
+  const home = homes.find(h => h.id === id);
+  if (!home) return;
+  deleteTargetId = id;
+  document.getElementById('deleteHomeMsg').textContent = `Remove "${escHtml(home.name)}" from the list?`;
+  openModal('deleteHomeModal');
+}
+
+function confirmDeleteHome() {
+  homes = homes.filter(h => h.id !== deleteTargetId);
+  deleteTargetId = null;
+  closeModal('deleteHomeModal');
+  saveState();
+  renderHomes();
+  updateLiveStats();
+  showToast('🗑 Home removed');
+}
+
+function openEditHome(id) {
+  _doOpenEditHome(id);
+}
+
+function _doOpenEditHome(id) {
+  const home = homes.find(h => h.id === id);
+  if (!home) return;
+  editTargetId = id;
+  document.getElementById('editHomeName').value = home.name;
+  openModal('editHomeModal');
+  setTimeout(() => document.getElementById('editHomeName').focus(), 300);
+}
+
+function confirmEditHome() {
+  const val = document.getElementById('editHomeName').value.trim();
+  if (!val) { showToast('⚠ Name cannot be empty'); return; }
+  const home = homes.find(h => h.id === editTargetId);
+  if (home) { home.name = val; saveState(); renderHomes(); }
+  closeModal('editHomeModal');
+  showToast('✓ Home renamed');
+}
+
+function onReadingChange(id, field, val) {
+  const home = homes.find(h => h.id === id);
+  if (!home) return;
+  home[field] = val;
+  saveState();
+  updateLiveStats();
+  updateHomeCard(id);
+}
+
+// ─────────────────────────────────────────────
+// LOCK (manual lock only — homes auto-unlock after calculation)
+// ─────────────────────────────────────────────
+function toggleLock(id) {
+  const home = homes.find(h => h.id === id);
+  if (!home) return;
+  home.locked = !home.locked;
+  if (!home.locked) prevReadingEditConfirmed.delete(id);
+  saveState();
+  renderHomes();
+  showToast(home.locked ? '🔒 Home locked' : '🔓 Home unlocked');
+}
+
+function getHomeKwh(home) {
+  const prev = parseFloat(home.prevReading);
+  const curr = parseFloat(home.currReading);
+  if (isNaN(prev) || isNaN(curr)) return 0;
+  if (curr < prev) return 0;
+  return curr - prev;
+}
+
+function getTotalKwh() {
+  return homes.reduce((s, h) => s + getHomeKwh(h), 0);
+}
+
+// ─────────────────────────────────────────────
+// RENDER HOMES
+// ─────────────────────────────────────────────
+function renderHomes() {
+  const container = document.getElementById('homesList');
+  if (!homes.length) {
+    container.innerHTML = `<div class="no-homes">
+      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <p>No homes added yet.<br/>Tap <strong>Add Home</strong> to begin.</p>
+    </div>`;
+    return;
+  }
+  container.innerHTML = homes.map((h, i) => renderHomeCardHTML(h, i)).join('');
+  // bind inputs
+  homes.forEach(h => {
+    const prevEl = document.getElementById(`home-prev-${h.id}`);
+    const currEl = document.getElementById(`home-curr-${h.id}`);
+    if (prevEl) {
+      prevEl.value = h.prevReading;
+      if (!h.locked) prevEl.addEventListener('input', e => onReadingChange(h.id,'prevReading',e.target.value));
+    }
+    if (currEl) { currEl.value = h.currReading; currEl.addEventListener('input', e => onReadingChange(h.id,'currReading',e.target.value)); }
+    updateHomeBar(h.id);
+  });
+}
+
+function renderHomeCardHTML(home, idx = 0) {
+  const CARD_COLORS = [
+    '#f59e0b', // amber
+    '#2563eb', // blue
+    '#10b981', // green
+    '#8b5cf6', // purple
+    '#f43f5e', // rose
+    '#06b6d4', // cyan
+    '#f97316', // orange
+    '#14b8a6', // teal
+  ];
+  const accentColor = CARD_COLORS[idx % CARD_COLORS.length];
+  const kwh = getHomeKwh(home);
+  const total = getTotalKwh();
+  const pct = total > 0 ? (kwh / total * 100) : 0;
+  const initials = home.name.split(' ').map(w=>w[0]||'').join('').slice(0,2).toUpperCase() || 'H';
+  const bill = parseFloat(document.getElementById('totalBill').value) || 0;
+  const amt = total > 0 ? (kwh / total * bill) : 0;
+  const prevErr = !home.locked && home.prevReading !== '' && home.currReading !== '' && parseFloat(home.currReading) < parseFloat(home.prevReading);
+  const isLocked = !!home.locked;
+
+  const lockBtnHtml = isLocked
+    ? `<button class="home-action-btn locked-btn" onclick="toggleLock(${home.id})" title="Unlock">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+       </button>`
+    : `<button class="home-action-btn lock-btn" onclick="toggleLock(${home.id})" title="Lock">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>
+       </button>`;
+
+  const editBtnHtml = isLocked ? '' :
+    `<button class="home-action-btn edit" onclick="openEditHome(${home.id})" title="Edit">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+     </button>`;
+
+  const prevReadingHtml = isLocked
+    ? `<div class="reading-group">
+        <div class="reading-label reading-label-locked">
+          🔒 Prev Reading (kWh)
+        </div>
+        <input class="reading-input" type="number" id="home-prev-${home.id}" placeholder="e.g. 1520" min="0" step="0.1" inputmode="decimal" readonly/>
+      </div>`
+    : `<div class="reading-group">
+        <div class="reading-label reading-label-prev">📊 Prev Reading (kWh)</div>
+        <input class="reading-input prev-input${prevErr?' error':''}" type="number" id="home-prev-${home.id}" placeholder="e.g. 1520" min="0" step="0.1" inputmode="decimal" onclick="onPrevReadingClick(${home.id})"/>
+        ${prevErr?`<div style="color:var(--red);font-size:.58rem;margin-top:3px">⚠ Current must be ≥ previous</div>`:''}
+      </div>`;
+
+  const hueIdx = homes.indexOf(home) % 10;
+  return `<div class="home-card${isLocked?' card-locked':''} hue-${hueIdx}" id="hcard-${home.id}">
+    <div class="home-card-header">
+      <div class="home-avatar" id="havatar-${home.id}" onclick="uploadAvatar(${home.id})" title="Change photo">
+        ${home.photo
+          ? `<img src="${home.photo}" alt="${escHtml(home.name)}"/>`
+          : `<svg class="home-avatar-initials" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg>`}
+        <div class="avatar-cam-badge">📷</div>
+        <input type="file" id="hphoto-${home.id}" accept="image/*" style="display:none" onchange="onAvatarFileChange(${home.id},this)"/>
+      </div>
+      <div class="home-name-wrap">
+        <div class="home-name">${escHtml(home.name)}${isLocked?'<span class="locked-chip">🔒 Locked</span>':''}</div>
+        <div class="home-usage-text" id="husage-${home.id}">${kwh>0?kwh.toFixed(1)+' kWh':'No reading'}</div>
+      </div>
+      <div class="home-card-actions">
+        ${lockBtnHtml}
+        ${editBtnHtml}
+        <button class="home-action-btn delete" onclick="removeHome(${home.id})" title="Remove">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="readings-row">
+      ${prevReadingHtml}
+      <div class="reading-group">
+        <div class="reading-label reading-label-curr">⚡ Curr Reading (kWh)</div>
+        <input class="reading-input${prevErr?' error':''}" type="number" id="home-curr-${home.id}" placeholder="e.g. 1675" min="0" step="0.1" inputmode="decimal"/>
+      </div>
+    </div>
+    <div class="usage-bar-wrap">
+      <div class="usage-bar-header">
+        <span class="usage-kwh" id="hkwh-${home.id}">${kwh>0?kwh.toFixed(2)+' kWh used':'—'}</span>
+        <span class="usage-pct" id="hpct-${home.id}">${pct>0?pct.toFixed(1)+'%':'0%'}</span>
+      </div>
+      <div class="usage-bar">
+        <div class="usage-bar-fill" id="hfill-${home.id}" style="width:0%"></div>
+      </div>
+    </div>
+    <div class="home-amount">
+      <div>
+        <div class="amount-label">Amount to Pay</div>
+      </div>
+      <div class="amount-value" id="hamount-${home.id}"><span class="etb">ETB</span>${amt>0?formatNum(amt):'—'}</div>
+    </div>
+  </div>`;
+}
+
+function updateHomeCard(id) {
+  const home = homes.find(h => h.id === id);
+  if (!home) return;
+  const kwh = getHomeKwh(home);
+  const total = getTotalKwh();
+  const pct = total > 0 ? (kwh / total * 100) : 0;
+  const bill = parseFloat(document.getElementById('totalBill').value) || 0;
+  const amt = total > 0 ? (kwh / total * bill) : 0;
+  const prevErr = home.prevReading !== '' && home.currReading !== '' && parseFloat(home.currReading) < parseFloat(home.prevReading);
+
+  const usageEl = document.getElementById(`husage-${id}`);
+  if (usageEl) usageEl.textContent = kwh>0?`${kwh.toFixed(1)} kWh`:'No reading';
+
+  const kwEl = document.getElementById(`hkwh-${id}`);
+  if (kwEl) kwEl.textContent = kwh>0?`${kwh.toFixed(2)} kWh used`:'—';
+
+  const pctEl = document.getElementById(`hpct-${id}`);
+  if (pctEl) pctEl.textContent = pct>0?`${pct.toFixed(1)}%`:'0%';
+
+  const fillEl = document.getElementById(`hfill-${id}`);
+  if (fillEl) fillEl.style.width = `${pct}%`;
+
+  const amtEl = document.getElementById(`hamount-${id}`);
+  if (amtEl) amtEl.innerHTML = `<span class="etb">ETB</span>${amt>0?formatNum(amt):'—'}`;
+
+  // error highlights
+  const prevInput = document.getElementById(`home-prev-${id}`);
+  const currInput = document.getElementById(`home-curr-${id}`);
+  if (prevInput) prevInput.classList.toggle('error', prevErr);
+  if (currInput) currInput.classList.toggle('error', prevErr);
+
+  // update all other bars because total changed
+  homes.forEach(h => { if (h.id !== id) updateHomeBar(h.id); });
+}
+
+function updateHomeBar(id) {
+  const home = homes.find(h => h.id === id);
+  if (!home) return;
+  const kwh = getHomeKwh(home);
+  const total = getTotalKwh();
+  const pct = total > 0 ? (kwh / total * 100) : 0;
+  const bill = parseFloat(document.getElementById('totalBill').value) || 0;
+  const amt = total > 0 ? (kwh / total * bill) : 0;
+
+  const fillEl = document.getElementById(`hfill-${id}`);
+  if (fillEl) fillEl.style.width = `${pct}%`;
+  const pctEl = document.getElementById(`hpct-${id}`);
+  if (pctEl) pctEl.textContent = `${pct.toFixed(1)}%`;
+  const kwEl = document.getElementById(`hkwh-${id}`);
+  if (kwEl) kwEl.textContent = kwh>0?`${kwh.toFixed(2)} kWh used`:'—';
+  const amtEl = document.getElementById(`hamount-${id}`);
+  if (amtEl) amtEl.innerHTML = `<span class="etb">ETB</span>${amt>0?formatNum(amt):'—'}`;
+  const usageEl = document.getElementById(`husage-${id}`);
+  if (usageEl) usageEl.textContent = kwh>0?`${kwh.toFixed(1)} kWh`:'No reading';
+}
+
+// ─────────────────────────────────────────────
+// AVATAR PHOTO UPLOAD
+// ─────────────────────────────────────────────
+function uploadAvatar(id) {
+  const input = document.getElementById('hphoto-' + id);
+  if (input) input.click();
+}
+
+function onAvatarFileChange(id, input) {
+  if (!input.files || !input.files[0]) return;
+  const file = input.files[0];
+  if (!file.type.startsWith('image/')) { showToast('⚠ Please select an image file'); return; }
+  resizeImageToBase64(file, 120, (dataUrl) => {
+    const home = homes.find(h => h.id === id);
+    if (!home) return;
+    home.photo = dataUrl;
+    saveState();
+    // Update avatar in DOM without full re-render
+    const avatarEl = document.getElementById('havatar-' + id);
+    if (avatarEl) {
+      // Replace initials span with img (keep badge and file input)
+      const existing = avatarEl.querySelector('.home-avatar-initials');
+      const existingImg = avatarEl.querySelector('img');
+      if (existing) existing.remove();
+      if (existingImg) existingImg.remove();
+      const img = document.createElement('img');
+      img.src = dataUrl;
+      img.alt = home.name;
+      avatarEl.insertBefore(img, avatarEl.firstChild);
+    }
+    showToast('🖼 Photo updated!');
+  });
+  // reset so same file can be re-selected
+  input.value = '';
+}
+
+function resizeImageToBase64(file, size, callback) {
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = size; canvas.height = size;
+      const ctx = canvas.getContext('2d');
+      // Square center-crop
+      const min = Math.min(img.width, img.height);
+      const sx = (img.width - min) / 2;
+      const sy = (img.height - min) / 2;
+      ctx.drawImage(img, sx, sy, min, min, 0, 0, size, size);
+      callback(canvas.toDataURL('image/jpeg', 0.82));
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+// ─────────────────────────────────────────────
+// LIVE STATS
+// ─────────────────────────────────────────────
+function updateLiveStats() {
+  const total = getTotalKwh();
+  const liveKwhEl  = document.getElementById('liveKwh');
+  const liveHomesEl = document.getElementById('liveHomes');
+  if (liveKwhEl)  liveKwhEl.textContent  = total > 0 ? total.toFixed(1) : '0';
+  if (liveHomesEl) liveHomesEl.textContent = homes.length;
+}
+
+function onBillChange() {
+  saveState();
+  const bill = parseFloat(document.getElementById('totalBill').value);
+  if (bill > 0) document.getElementById('billError').classList.remove('show');
+  updateLiveStats();
+  homes.forEach(h => updateHomeBar(h.id));
+}
+
+// ─────────────────────────────────────────────
+// CALCULATE
+// ─────────────────────────────────────────────
+function calculate() {
+  const billEl = document.getElementById('totalBill');
+  const bill = parseFloat(billEl.value);
+  const billErr = document.getElementById('billError');
+
+  // Validate bill
+  if (!bill || bill <= 0) {
+    billErr.classList.add('show');
+    billEl.focus();
+    showToast('⚠ Enter the total EEU bill amount');
+    return;
+  }
+  billErr.classList.remove('show');
+
+  if (!homes.length) { showToast('⚠ Add at least one home'); return; }
+
+  // Validate readings
+  let valid = true;
+  for (const h of homes) {
+    const prev = parseFloat(h.prevReading);
+    const curr = parseFloat(h.currReading);
+    if (h.prevReading === '' || h.currReading === '') {
+      showToast(`⚠ ${h.name}: enter both readings`);
+      valid = false; break;
+    }
+    if (isNaN(prev) || isNaN(curr) || prev < 0 || curr < 0) {
+      showToast(`⚠ ${h.name}: invalid reading values`);
+      valid = false; break;
+    }
+    if (curr < prev) {
+      showToast(`⚠ ${h.name}: current must be ≥ previous`);
+      valid = false; break;
+    }
+  }
+  if (!valid) return;
+
+  const totalKwh = getTotalKwh();
+  if (totalKwh === 0) { showToast('⚠ Total consumption is 0 kWh'); return; }
+
+  const rate = bill / totalKwh;
+  const results = homes.map(h => {
+    const kwh = getHomeKwh(h);
+    const pct = kwh / totalKwh * 100;
+    const amt = kwh / totalKwh * bill;
+    return { ...h, kwh, pct, amt };
+  });
+
+  results.sort((a,b) => b.kwh - a.kwh);
+  const highestId = results[0].id;
+  const lowestId = results[results.length-1].id;
+
+  lastCalcResults = { bill, totalKwh, rate, results, highestId, lowestId,
+    month: document.getElementById('billingMonth').value,
+    note: document.getElementById('billingNote').value,
+    date: new Date().toISOString()
+  };
+
+  renderResults(lastCalcResults);
+  showToast('✅ Calculation complete!');
+
+  // Promote current → previous for next cycle, unlock homes ready for next entry
+  homes.forEach(h => {
+    h.prevReading   = h.currReading;
+    h.currReading   = '';
+    h.locked        = false;
+  });
+  saveState();
+  renderHomes();
+
+  // switch to results
+  setTimeout(() => {
+    const resultsBtn = document.querySelector('.tab-btn[onclick*="results"]');
+    switchTab('results', resultsBtn);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, 400);
+}
+
+// ─────────────────────────────────────────────
+// RENDER RESULTS
+// ─────────────────────────────────────────────
+function renderResults(data) {
+  const container = document.getElementById('resultsList');
+  const maxKwh = Math.max(...data.results.map(r => r.kwh));
+  container.innerHTML = data.results.map(r => {
+    const initials = r.name.split(' ').map(w=>w[0]||'').join('').slice(0,2).toUpperCase()||'H';
+    const isHigh = r.id === data.highestId;
+    const isLow = r.id === data.lowestId;
+    const barPct = maxKwh > 0 ? (r.kwh / maxKwh * 100) : 0;
+    return `<div class="result-card ${isHigh?'highest':isLow?'lowest':''}">
+      <div class="result-top">
+        <div class="result-avatar" style="overflow:hidden;flex-shrink:0">${r.photo ? `<img src="${r.photo}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;display:block"/>` : `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg>`}</div>
+        <div class="result-info">
+          <div class="result-name">${escHtml(r.name)}
+            ${isHigh?'<span class="badge high" style="margin-left:5px">🔥 Most</span>':''}
+            ${isLow?'<span class="badge low" style="margin-left:5px">✓ Least</span>':''}
+          </div>
+          <div class="result-sub">${r.kwh.toFixed(2)} kWh · ${r.pct.toFixed(1)}% · ${(r.prevReading||0)} → ${(r.currReading||0)}</div>
+        </div>
+        <div class="result-amount">
+          <span class="etb">ETB</span>
+          ${formatNum(r.amt)}
+        </div>
+      </div>
+      <div class="result-bar"><div class="result-bar-fill" style="width:${barPct}%"></div></div>
+    </div>`;
+  }).join('');
+}
+
+// ─────────────────────────────────────────────
+// SHARE / COPY
+// ─────────────────────────────────────────────
+function formatDateShort(d) {
+  const dt = d instanceof Date ? d : new Date(d || Date.now());
+  const dd = String(dt.getDate()).padStart(2,'0');
+  const mm = String(dt.getMonth()+1).padStart(2,'0');
+  const yy = String(dt.getFullYear()).slice(-2);
+  return `${dd}-${mm}-${yy}`;
+}
+
+function buildResultsText(data) {
+  const monthLabel = data.month ? formatMonth(data.month) : '';
+  const dateStr = formatDateShort(data.date ? new Date(data.date) : new Date());
+  let txt = `⚡ FairSplit — EEU Bill Summary\n`;
+  if (monthLabel) txt += `📅 ${monthLabel}\n`;
+  txt += `🗓 Date: ${dateStr}\n`;
+  txt += `💰 Total Bill: ETB ${formatNum(data.bill)}\n`;
+  txt += `📊 Total Usage: ${data.totalKwh.toFixed(2)} kWh\n\n`;
+  data.results.forEach(r => {
+    txt += `🏠 ${r.name}\n`;
+    txt += `   Usage: ${r.kwh.toFixed(2)} kWh (${r.pct.toFixed(1)}%)\n`;
+    txt += `   Pays: ETB ${formatNum(r.amt)}\n\n`;
+  });
+  if (data.note) txt += `📝 Note: ${data.note}\n`;
+  txt += `\n— Shared via FairSplit`;
+  return txt;
+}
+
+function copyResults() {
+  if (!lastCalcResults) { showToast('⚠ Calculate first'); return; }
+  const btn = document.querySelector('.action-btn[onclick*="copyResults"]');
+  copyToClipboard(buildResultsText(lastCalcResults)).then(ok => {
+    showToast(ok ? '📋 Results copied!' : '⚠ Copy failed — try Share instead');
+    if (ok && btn) {
+      // Swap to success state
+      const originalHTML = btn.innerHTML;
+      const originalStyle = { color: btn.style.color, border: btn.style.borderColor, bg: btn.style.background };
+      btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Copied!`;
+      btn.style.color = 'var(--green)';
+      btn.style.borderColor = 'rgba(16,185,129,0.45)';
+      btn.style.background = 'var(--green-glow)';
+      btn.classList.remove('copy-btn-anim');
+      // Force reflow so animation re-triggers
+      void btn.offsetWidth;
+      btn.classList.add('copy-btn-anim');
+      // Restore original after 2.2s
+      setTimeout(() => {
+        btn.innerHTML = originalHTML;
+        btn.style.color = originalStyle.color;
+        btn.style.borderColor = originalStyle.border;
+        btn.style.background = originalStyle.bg;
+        btn.classList.remove('copy-btn-anim');
+      }, 2200);
+    }
+  });
+}
+
+async function copyToClipboard(text) {
+  // Modern async clipboard API (requires secure context)
+  if (navigator.clipboard && window.isSecureContext) {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch(e) {}
+  }
+  // Fallback: textarea + execCommand (works on HTTP / older browsers / mobile)
+  try {
+    const el = document.createElement('textarea');
+    el.value = text;
+    el.setAttribute('readonly', '');
+    el.style.cssText = 'position:fixed;top:-9999px;left:-9999px;opacity:0;';
+    document.body.appendChild(el);
+    el.focus();
+    el.select();
+    el.setSelectionRange(0, el.value.length); // iOS fix
+    const ok = document.execCommand('copy');
+    document.body.removeChild(el);
+    return ok;
+  } catch(e) {
+    return false;
+  }
+}
+
+// ─────────────────────────────────────────────
+// RESET
+// ─────────────────────────────────────────────
+function openResetModal() { openModal('resetModal'); }
+function resetAll() {
+  homes = []; homeIdCounter = 0; lastCalcResults = null;
+  prevReadingEditConfirmed.clear();
+  document.getElementById('totalBill').value = '';
+  document.getElementById('billingNote').value = '';
+  const now = new Date();
+  document.getElementById('billingMonth').value = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  saveState();
+  renderHomes();
+  updateLiveStats();
+  document.getElementById('resultsList').innerHTML = `<div class="empty-state"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M18 20V10M12 20V4M6 20v-6"/></svg><p>Enter bill details and tap<br/><strong>Calculate Fair Split</strong></p></div>`;
+  closeModal('resetModal');
+  const inputBtn = document.querySelector('.tab-btn[onclick*="input"]');
+  if (inputBtn) switchTab('input', inputBtn);
+  setTimeout(() => showToast('♻ Reset complete'), 320);
+}
+
+// ─────────────────────────────────────────────
+// PERSIST STATE
+// ─────────────────────────────────────────────
+function saveState() {
+  const state = {
+    homes, homeIdCounter,
+    bill: document.getElementById('totalBill').value,
+    month: document.getElementById('billingMonth').value,
+    note: document.getElementById('billingNote').value,
+  };
+  try { localStorage.setItem('fs_state', JSON.stringify(state)); } catch(e) {}
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem('fs_state');
+    if (!raw) return;
+    const state = JSON.parse(raw);
+    homes = (state.homes || []).map(h => ({ ...h, locked: h.locked || false }));
+    homeIdCounter = state.homeIdCounter || homes.length;
+    if (state.bill) document.getElementById('totalBill').value = state.bill;
+    if (state.month) document.getElementById('billingMonth').value = state.month;
+    if (state.note) document.getElementById('billingNote').value = state.note;
+  } catch(e) { homes = []; }
+}
+
+// ─────────────────────────────────────────────
+// EDIT PREVIOUS DATA WARNING
+// ─────────────────────────────────────────────
+function warnEditPrevData(msg, onConfirm, onCancel) {
+  editPrevDataCallback = onConfirm || null;
+  editPrevDataCancelCallback = onCancel || null;
+  document.getElementById('editPrevDataMsg').textContent = msg;
+  openModal('editPrevDataModal');
+}
+
+function confirmEditPrevData() {
+  closeModal('editPrevDataModal');
+  if (editPrevDataCallback) { editPrevDataCallback(); editPrevDataCallback = null; }
+  editPrevDataCancelCallback = null;
+}
+
+function cancelEditPrevData() {
+  closeModal('editPrevDataModal');
+  if (editPrevDataCancelCallback) { editPrevDataCancelCallback(); editPrevDataCancelCallback = null; }
+  editPrevDataCallback = null;
+}
+
+// Called when user taps the Prev Reading input that already has a value
+function onPrevReadingClick(id) {
+  // If already confirmed this session, allow editing freely
+  if (prevReadingEditConfirmed.has(id)) return;
+  const home = homes.find(h => h.id === id);
+  if (!home || home.prevReading === '' || home.prevReading === undefined) return;
+
+  // Blur so the keyboard doesn't open until they confirm
+  const el = document.getElementById(`home-prev-${id}`);
+  if (el) el.blur();
+
+  warnEditPrevData(
+    `"${home.name}" already has a previous reading of ${home.prevReading} kWh. Changing this value will affect the kWh consumption calculation and the bill split.`,
+    () => {
+      // User confirmed — mark as OK for this session and re-focus
+      prevReadingEditConfirmed.add(id);
+      const inp = document.getElementById(`home-prev-${id}`);
+      if (inp) { inp.focus(); inp.select(); }
+    },
+    () => {
+      // User cancelled — restore the original value visually
+      const inp = document.getElementById(`home-prev-${id}`);
+      if (inp) inp.value = home.prevReading;
+    }
+  );
+}
+
+// ─────────────────────────────────────────────
+// MODALS
+// ─────────────────────────────────────────────
+function openModal(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.add('show');
+}
+function closeModal(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.remove('show');
+}
+// close on overlay tap
+document.querySelectorAll('.modal-overlay').forEach(el => {
+  el.addEventListener('click', e => { if (e.target === el) el.classList.remove('show'); });
+});
+
+// ─────────────────────────────────────────────
+// TOAST
+// ─────────────────────────────────────────────
+let toastTimer = null;
+function showToast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 2800);
+}
+
+// ─────────────────────────────────────────────
+// HELPERS
+// ─────────────────────────────────────────────
+function formatNum(n) {
+  return Number(n).toLocaleString('en-ET', {minimumFractionDigits:2,maximumFractionDigits:2});
+}
+function formatMonth(m) {
+  if (!m) return '';
+  const [yr, mo] = m.split('-');
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return `${months[parseInt(mo)-1]} ${yr}`;
+}
+function formatDate(d) {
+  const dt = d instanceof Date ? d : new Date(d || Date.now());
+  const day  = String(dt.getDate()).padStart(2,'0');
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const mon  = months[dt.getMonth()];
+  const yr   = dt.getFullYear();
+  return `${day}-${mon}-${yr}`;
+}
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+// ─────────────────────────────────────────────
+// OFFLINE BANNER
+// ─────────────────────────────────────────────
+const OFFLINE_GRACE_MS  = 7 * 24 * 60 * 60 * 1000;
+const OFFLINE_LAST_KEY  = 'fs_last_access_ok';
+
+function updateOfflineBanner() {
+  const banner    = document.getElementById('offlineBanner');
+  const subEl     = document.getElementById('offlineBannerSub');
+  const badgeEl   = document.getElementById('offlineGraceBadge');
+  if (!banner) return;
+
+  if (navigator.onLine) {
+    banner.style.display = 'none';
+    return;
+  }
+
+  // Offline — calculate grace days left
+  const lastOk  = parseInt(localStorage.getItem(OFFLINE_LAST_KEY) || '0', 10);
+  const elapsed = lastOk ? Date.now() - lastOk : OFFLINE_GRACE_MS;
+  const msLeft  = OFFLINE_GRACE_MS - elapsed;
+  const daysLeft = Math.max(0, Math.ceil(msLeft / (1000 * 60 * 60 * 24)));
+
+  banner.style.display = 'flex';
+
+  if (daysLeft <= 0) {
+    banner.style.background = 'linear-gradient(135deg,rgba(239,68,68,0.15),rgba(239,68,68,0.08))';
+    banner.style.borderColor = 'rgba(239,68,68,0.4)';
+    banner.style.color = '#fca5a5';
+    if (subEl)   subEl.textContent  = 'Grace period expired — connect to continue';
+    if (badgeEl) { badgeEl.textContent = 'Expired'; badgeEl.style.color = '#fca5a5'; badgeEl.style.borderColor = 'rgba(239,68,68,0.4)'; badgeEl.style.background = 'rgba(239,68,68,0.15)'; }
+  } else if (daysLeft <= 2) {
+    banner.style.background = 'linear-gradient(135deg,rgba(245,158,11,0.15),rgba(245,158,11,0.08))';
+    banner.style.borderColor = 'rgba(245,158,11,0.4)';
+    banner.style.color = '#fcd34d';
+    if (subEl)   subEl.textContent  = `Only ${daysLeft} day${daysLeft !== 1 ? 's' : ''} left — connect soon!`;
+    if (badgeEl) { badgeEl.textContent = `${daysLeft}d left`; badgeEl.style.color = '#fcd34d'; badgeEl.style.borderColor = 'rgba(245,158,11,0.4)'; badgeEl.style.background = 'rgba(245,158,11,0.15)'; }
+  } else {
+    banner.style.background = 'linear-gradient(135deg,rgba(59,130,246,0.15),rgba(59,130,246,0.08))';
+    banner.style.borderColor = 'rgba(59,130,246,0.35)';
+    banner.style.color = '#93c5fd';
+    if (subEl)   subEl.textContent  = `Grace period active — connect within ${daysLeft} days`;
+    if (badgeEl) { badgeEl.textContent = `${daysLeft}d left`; badgeEl.style.color = '#93c5fd'; badgeEl.style.borderColor = 'rgba(59,130,246,0.4)'; badgeEl.style.background = 'rgba(59,130,246,0.2)'; }
+  }
+}
+
+window.addEventListener('offline', updateOfflineBanner);
+window.addEventListener('online',  updateOfflineBanner);
+// Run once on load
+document.addEventListener('DOMContentLoaded', updateOfflineBanner);
+
+// Install prompt
+let deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault(); deferredPrompt = e;
+  setTimeout(() => showToast('📲 Tap ⊕ to install FairSplit'), 3000);
+});
+
+// ─────────────────────────────────────────────
+// THEME SYSTEM
+// ─────────────────────────────────────────────
+const THEME_KEY = 'fs_theme';
+const THEMES = { DARK: 'dark', LIGHT: 'light' };
+
+function applyTheme(theme, animate) {
+  const html = document.documentElement;
+  if (animate) {
+    html.classList.add('theme-transitioning');
+    setTimeout(() => html.classList.remove('theme-transitioning'), 380);
+  }
+  if (theme === THEMES.LIGHT) {
+    html.setAttribute('data-theme', 'light');
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', '#eeeef4');
+  } else {
+    html.removeAttribute('data-theme');
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0f');
+  }
+}
+
+function toggleTheme() {
+  const current = document.documentElement.getAttribute('data-theme') === 'light'
+    ? THEMES.LIGHT : THEMES.DARK;
+  const next = current === THEMES.DARK ? THEMES.LIGHT : THEMES.DARK;
+  applyTheme(next, true);
+  try { localStorage.setItem(THEME_KEY, next); } catch(e) {}
+  showToast(next === THEMES.LIGHT ? '☀ Light theme' : '🌙 Dark theme');
+}
+
+function loadTheme() {
+  try {
+    const saved = localStorage.getItem(THEME_KEY);
+    if (saved) applyTheme(saved, false);
+  } catch(e) {}
+}
+
+// Apply saved theme immediately (before DOM paint to avoid flash)
+loadTheme();
+</script>
+
+<script type="module">
+
+const registerBtn = document.getElementById("registerBtn");
+const registerMsg = document.getElementById("registerMsg");
+const registerScreen = document.getElementById("registerScreen");
+
+// Run on page load
+checkUserAccess();
+
+function setMsg(text, type) {
+  // type: 'error' | 'success' | 'info' | 'loading'
+  const colors = {
+    error:   '#ef4444',
+    success: '#16a34a',
+    info:    '#f59e0b',
+    loading: '#aaaaaa'
+  };
+  registerMsg.style.color = colors[type] || '#ccc';
+  registerMsg.innerText = text;
+}
+
+registerBtn.addEventListener("click", async () => {
+  const phone = document.getElementById("phoneInput").value.trim();
+
+  // ── Empty check
+  if (!phone) {
+    setMsg("⚠ Please enter your phone number", "error");
+    return;
+  }
+
+  // ── Digit-only check
+  if (!/^\d+$/.test(phone)) {
+    setMsg("⚠ Phone number must contain digits only", "error");
+    return;
+  }
+
+  // ── Length check
+  if (phone.length !== 10) {
+    setMsg(`⚠ Must be exactly 10 digits (you entered ${phone.length})`, "error");
+    return;
+  }
+
+  // ── Prefix check
+  if (!/^(09|07)/.test(phone)) {
+    setMsg("⚠ Phone must start with 09 or 07", "error");
+    return;
+  }
+
+  // ── All good — show loading
+  setMsg("⏳ Registering...", "loading");
+  registerBtn.disabled = true;
+
+  try {
+    const userRef = window.doc(window.db, "users", phone);
+    const userSnap = await window.getDoc(userRef);
+
+    if (!userSnap.exists()) {
+      const today = new Date();
+      const trialEnd = new Date();
+      trialEnd.setMonth(trialEnd.getMonth() + 2);
+
+      await window.setDoc(userRef, {
+        active: true,
+        paid: false,
+        registeredAt: today.toISOString(),
+        trialEnds: trialEnd.toISOString()
       });
-    </script>
-  </body>
+
+      setMsg("✅ Registration successful!", "success");
+    } else {
+      setMsg("✅ Welcome back!", "success");
+    }
+
+    localStorage.setItem("fairsplitUser", phone);
+    // Show loader while transitioning into the app
+    const ov = document.getElementById('loadingOverlay');
+    const lm = document.getElementById('loadingMsg');
+    if (ov) { ov.style.opacity = '1'; ov.style.display = 'flex'; }
+    if (lm) lm.textContent = 'Loading…';
+    setTimeout(() => checkUserAccess(), 800);
+
+  } catch (err) {
+    console.error(err);
+    setMsg("❌ Registration failed. Check your connection.", "error");
+  } finally {
+    registerBtn.disabled = false;
+  }
+});
+
+// ✅ Defined at top level
+function hideLoader() {
+  const ov = document.getElementById('loadingOverlay');
+  if (!ov) return;
+  ov.style.opacity = '0';
+  setTimeout(() => { ov.style.display = 'none'; }, 420);
+}
+
+async function checkUserAccess() {
+  const savedUser = localStorage.getItem("fairsplitUser");
+  if (!savedUser) {
+    const lm = document.getElementById('loadingMsg');
+    if (lm) lm.textContent = 'Ready';
+    setTimeout(hideLoader, 400);
+    return;
+  }
+
+  const lm = document.getElementById('loadingMsg');
+  if (lm) lm.textContent = 'Checking access…';
+
+  // ── Grace period constants
+  const GRACE_DAYS   = 7;
+  const GRACE_MS     = GRACE_DAYS * 24 * 60 * 60 * 1000;
+  const LAST_OK_KEY  = 'fs_last_access_ok';
+
+  try {
+    const userRef = window.doc(window.db, "users", savedUser);
+    const userSnap = await window.getDoc(userRef);
+
+    if (!userSnap.exists()) {
+      localStorage.removeItem("fairsplitUser");
+      localStorage.removeItem(LAST_OK_KEY);
+      registerScreen.style.display = "flex";
+      hideLoader();
+      return;
+    }
+
+    const userData = userSnap.data();
+
+    if (!userData.active) {
+      hideLoader();
+      alert("Account disabled");
+      return;
+    }
+
+    const now = new Date();
+    const trialEnds = new Date(userData.trialEnds);
+    const licenseExpires = userData.licenseExpires
+      ? new Date(userData.licenseExpires)
+      : null;
+
+    const accessAllowed =
+      now < trialEnds ||
+      (userData.paid && licenseExpires && now < licenseExpires);
+
+    if (!accessAllowed) {
+      hideLoader();
+      alert("Trial expired. Pay 300 ETB yearly.");
+      return;
+    }
+
+    // ── Save timestamp of last successful online check
+    localStorage.setItem(LAST_OK_KEY, Date.now().toString());
+
+    if (lm) lm.textContent = 'Loading…';
+    registerScreen.style.display = "none";
+
+    // ── Show trial remaining popup
+    const msLeft  = trialEnds - now;
+    const daysLeft = Math.ceil(msLeft / (1000 * 60 * 60 * 24));
+
+    const popup   = document.getElementById('trialPopup');
+    const iconEl  = document.getElementById('trialPopupIcon');
+    const titleEl = document.getElementById('trialPopupTitle');
+    const daysEl  = document.getElementById('trialPopupDays');
+    const subEl   = document.getElementById('trialPopupSub');
+
+    if (userData.paid && licenseExpires && now < licenseExpires) {
+      const licenseDays = Math.ceil((licenseExpires - now) / (1000 * 60 * 60 * 24));
+      iconEl.textContent  = '✅';
+      titleEl.textContent = 'Licensed';
+      titleEl.style.color = '#10b981';
+      daysEl.textContent  = licenseDays;
+      daysEl.style.color  = '#10b981';
+      subEl.textContent   = 'days remaining on your license';
+    } else {
+      const urgent = daysLeft <= 7;
+      iconEl.textContent  = urgent ? '⚠️' : '⏳';
+      titleEl.textContent = 'Trial Active';
+      titleEl.style.color = urgent ? '#ef4444' : '#f59e0b';
+      daysEl.textContent  = daysLeft;
+      daysEl.style.color  = urgent ? '#ef4444' : '#f4f4f8';
+      subEl.textContent   = urgent
+        ? 'days left — trial ending soon!'
+        : 'days remaining in your trial';
+    }
+
+    hideLoader();
+    setTimeout(() => { popup.style.display = 'flex'; }, 300);
+
+  } catch (err) {
+    // ── OFFLINE / network error — check grace period
+    console.warn('Offline or Firebase error:', err);
+
+    const lastOk  = parseInt(localStorage.getItem(LAST_OK_KEY) || '0', 10);
+    const elapsed = Date.now() - lastOk;
+
+    if (lastOk && elapsed < GRACE_MS) {
+      // Still within grace period — allow access
+      const graceLeft = Math.ceil((GRACE_MS - elapsed) / (1000 * 60 * 60 * 24));
+
+      if (lm) lm.textContent = 'Offline mode…';
+      registerScreen.style.display = "none";
+
+      // Show offline grace popup
+      const popup   = document.getElementById('trialPopup');
+      const iconEl  = document.getElementById('trialPopupIcon');
+      const titleEl = document.getElementById('trialPopupTitle');
+      const daysEl  = document.getElementById('trialPopupDays');
+      const subEl   = document.getElementById('trialPopupSub');
+
+      iconEl.textContent  = '📶';
+      titleEl.textContent = 'Offline Mode';
+      titleEl.style.color = '#3b82f6';
+      daysEl.textContent  = graceLeft;
+      daysEl.style.color  = graceLeft <= 2 ? '#ef4444' : '#f4f4f8';
+      subEl.textContent   = `day${graceLeft !== 1 ? 's' : ''} of offline grace remaining`;
+
+      hideLoader();
+      setTimeout(() => { popup.style.display = 'flex'; }, 300);
+
+    } else {
+      // Grace period expired or never had a valid session
+      hideLoader();
+      alert(lastOk
+        ? "Offline grace period (7 days) expired. Please connect to the internet."
+        : "Cannot connect. Please check your internet connection."
+      );
+    }
+  }
+}
+</script>
+
+<!-- ═══════════ CONTACT INFO ═══════════ -->
+<section class="card" style="padding:14px;margin-bottom:14px;margin:14px 16px">
+
+  <div class="card-title" style="margin-bottom:10px">
+    📞 Contact
+  </div>
+
+  <div style="
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    font-size:.78rem;
+  ">
+
+    <div style="
+      background:var(--bg-card2);
+      border:1px solid var(--border);
+      border-radius:12px;
+      padding:10px 12px;
+    ">
+      <div style="color:var(--text-3);font-size:.58rem;margin-bottom:2px">
+        Developer
+      </div>
+      <div style="font-weight:700">FairSplitTeam</div>
+    </div>
+
+    <a href="tel:+251799217580" style="
+      text-decoration:none;
+      color:var(--text-1);
+      background:var(--bg-card2);
+      border:1px solid var(--border);
+      border-radius:12px;
+      padding:10px 12px;
+      display:block;
+    ">
+      <div style="color:var(--text-3);font-size:.58rem;margin-bottom:2px">
+         Call Now
+      </div>
+      <div style="font-weight:800;color:var(--amber)">
+        +251799217580
+      </div>
+    </a>
+
+  </div>
+
+</section>
+
+</body>
 </html>
