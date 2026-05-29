@@ -854,6 +854,16 @@ To activate contact <strong style="color:#f59e0b">0799217580</strong>
           <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
         </svg>
       </button>
+      <button id="langBtn" onclick="toggleLang()" title="Switch Language" style="
+        width:30px;height:30px;border-radius:8px;
+        background:rgba(0,0,0,0.2);
+        border:1px solid rgba(255,255,255,0.2);
+        display:flex;align-items:center;justify-content:center;
+        cursor:pointer;color:rgba(255,255,255,0.85);
+        font-size:.6rem;font-weight:800;letter-spacing:.04em;
+        font-family:var(--font-head);
+        -webkit-appearance:none;
+      ">አማ</button>
       <button class="icon-btn" onclick="openResetModal()" title="Reset">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.55"/></svg>
       </button>
@@ -983,34 +993,32 @@ To activate contact <strong style="color:#f59e0b">0799217580</strong>
 
 <!-- ───── MODALS ───── -->
 <!-- About Modal -->
-<div class="modal-overlay" id="aboutModal" style="align-items:flex-end">
-  <div class="modal-sheet" style="padding:0;overflow:hidden;max-height:88vh;display:flex;flex-direction:column">
-    <div class="modal-handle" onclick="closeModal('aboutModal')" style="margin:14px auto 6px;flex-shrink:0"></div>
-
+<div class="modal-overlay" id="aboutModal" style="align-items:stretch;padding:0">
+  <div class="modal-sheet" style="padding:0;overflow:hidden;height:100vh;max-height:100vh;border-radius:0;display:flex;flex-direction:column;width:100%;max-width:100%">
     <!-- Scrollable content -->
     <div style="overflow-y:auto;-webkit-overflow-scrolling:touch;flex:1">
 
-    <!-- Header banner -->
+    <!-- Header banner — minimized, green, flush to top with close button -->
     <div style="
-      background:linear-gradient(135deg,var(--amber-dark),var(--amber));
-      padding:20px 22px 18px;
-      display:flex;align-items:center;gap:14px;
-      margin-top:6px;
+      background:linear-gradient(135deg,#064e3b,#059669);
+      padding:10px 14px 10px;
+      display:flex;align-items:center;gap:10px;
     ">
       <div style="
-        width:48px;height:48px;border-radius:14px;
+        width:34px;height:34px;border-radius:10px;
         background:rgba(0,0,0,0.2);
         display:flex;align-items:center;justify-content:center;
         flex-shrink:0;
       ">
-        <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+        <svg width="20" height="20" viewBox="0 0 32 32" fill="none">
           <path d="M18 4L6 18H16L14 28L26 14H16L18 4Z" fill="white" stroke="rgba(255,255,255,0.6)" stroke-width=".5" stroke-linejoin="round"/>
         </svg>
       </div>
-      <div>
-        <div style="font-size:1.2rem;font-weight:800;color:#0c0c0e;letter-spacing:-.02em">FairSplit</div>
-        <div style="font-size:.65rem;color:rgba(0,0,0,0.55);letter-spacing:.1em;text-transform:uppercase;font-family:var(--font-mono)">EEU Bill Splitter · v1.0</div>
+      <div style="flex:1">
+        <div style="font-size:.95rem;font-weight:800;color:#fff;letter-spacing:-.02em">FairSplit</div>
+        <div style="font-size:.55rem;color:rgba(255,255,255,0.65);letter-spacing:.1em;text-transform:uppercase;font-family:var(--font-mono)">EEU Bill Splitter · v1.0</div>
       </div>
+      <button onclick="closeModal('aboutModal')" style="background:rgba(0,0,0,0.2);border:1px solid rgba(255,255,255,0.25);border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;font-size:1rem;line-height:1;flex-shrink:0">✕</button>
     </div>
 
     <!-- Content -->
@@ -1259,8 +1267,9 @@ function switchTab(id, btn) {
 // HOME MANAGEMENT
 // ─────────────────────────────────────────────
 function addHome() {
-  if (homes.length >= 10) { showToast('⚡ Maximum 10 homes allowed'); return; }
-  const name = DEFAULT_HOME_NAMES[homes.length] || `House ${homes.length+1}`;
+  if (homes.length >= 10) { showToast(T('toast_maxHomes')); return; }
+  const defNames = STRINGS[currentLang].defaultNames;
+  const name = defNames[homes.length] || (currentLang==='am' ? `ቤት ${homes.length+1}` : `House ${homes.length+1}`);
   homes.push({
     id: ++homeIdCounter,
     name,
@@ -1282,7 +1291,9 @@ function removeHome(id) {
   const home = homes.find(h => h.id === id);
   if (!home) return;
   deleteTargetId = id;
-  document.getElementById('deleteHomeMsg').textContent = `Remove "${escHtml(home.name)}" from the list?`;
+  document.getElementById('deleteHomeMsg').textContent = currentLang==='am'
+    ? `"${escHtml(home.name)}" ከዝርዝሩ ያስወግዱ?`
+    : `Remove "${escHtml(home.name)}" from the list?`;
   openModal('deleteHomeModal');
 }
 
@@ -1293,7 +1304,7 @@ function confirmDeleteHome() {
   saveState();
   renderHomes();
   updateLiveStats();
-  showToast('🗑 Home removed');
+  showToast(T('toast_homeRemoved'));
 }
 
 function openEditHome(id) {
@@ -1311,11 +1322,11 @@ function _doOpenEditHome(id) {
 
 function confirmEditHome() {
   const val = document.getElementById('editHomeName').value.trim();
-  if (!val) { showToast('⚠ Name cannot be empty'); return; }
+  if (!val) { showToast(T('toast_nameEmpty')); return; }
   const home = homes.find(h => h.id === editTargetId);
   if (home) { home.name = val; saveState(); renderHomes(); }
   closeModal('editHomeModal');
-  showToast('✓ Home renamed');
+  showToast(T('toast_homeRenamed'));
 }
 
 function onReadingChange(id, field, val) {
@@ -1337,7 +1348,7 @@ function toggleLock(id) {
   if (!home.locked) prevReadingEditConfirmed.delete(id);
   saveState();
   renderHomes();
-  showToast(home.locked ? '🔒 Home locked' : '🔓 Home unlocked');
+  showToast(home.locked ? T('toast_homeLocked') : T('toast_homeUnlocked'));
 }
 
 function getHomeKwh(home) {
@@ -1360,7 +1371,7 @@ function renderHomes() {
   if (!homes.length) {
     container.innerHTML = `<div class="no-homes">
       <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-      <p>No homes added yet.<br/>Tap <strong>Add Home</strong> to begin.</p>
+      <p>${T('noHomesMsg')}</p>
     </div>`;
     return;
   }
@@ -1415,14 +1426,14 @@ function renderHomeCardHTML(home, idx = 0) {
   const prevReadingHtml = isLocked
     ? `<div class="reading-group">
         <div class="reading-label reading-label-locked">
-          🔒 Prev Reading (kWh)
+          ${T('prevReadingLocked')}
         </div>
         <input class="reading-input" type="number" id="home-prev-${home.id}" placeholder="e.g. 1520" min="0" step="0.1" inputmode="decimal" readonly/>
       </div>`
     : `<div class="reading-group">
-        <div class="reading-label reading-label-prev">📊 Prev Reading (kWh)</div>
+        <div class="reading-label reading-label-prev">${T('prevReading')}</div>
         <input class="reading-input prev-input${prevErr?' error':''}" type="number" id="home-prev-${home.id}" placeholder="e.g. 1520" min="0" step="0.1" inputmode="decimal" onclick="onPrevReadingClick(${home.id})"/>
-        ${prevErr?`<div style="color:var(--red);font-size:.58rem;margin-top:3px">⚠ Current must be ≥ previous</div>`:''}
+        ${prevErr?`<div style="color:var(--red);font-size:.58rem;margin-top:3px">⚠ ${currentLang==='am'?'አሁናዊ ≥ ቀዳሚ መሆን አለበት':'Current must be ≥ previous'}</div>`:''}
       </div>`;
 
   const hueIdx = homes.indexOf(home) % 10;
@@ -1436,8 +1447,8 @@ function renderHomeCardHTML(home, idx = 0) {
         <input type="file" id="hphoto-${home.id}" accept="image/*" style="display:none" onchange="onAvatarFileChange(${home.id},this)"/>
       </div>
       <div class="home-name-wrap">
-        <div class="home-name">${escHtml(home.name)}${isLocked?'<span class="locked-chip">🔒 Locked</span>':''}</div>
-        <div class="home-usage-text" id="husage-${home.id}">${kwh>0?kwh.toFixed(1)+' kWh':'No reading'}</div>
+        <div class="home-name">${escHtml(home.name)}${isLocked?`<span class="locked-chip">${T('lockedChip')}</span>`:''}</div>
+        <div class="home-usage-text" id="husage-${home.id}">${kwh>0?kwh.toFixed(1)+' kWh':T('noReading')}</div>
       </div>
       <div class="home-card-actions">
         ${lockBtnHtml}
@@ -1450,13 +1461,13 @@ function renderHomeCardHTML(home, idx = 0) {
     <div class="readings-row">
       ${prevReadingHtml}
       <div class="reading-group">
-        <div class="reading-label reading-label-curr">⚡ Curr Reading (kWh)</div>
+        <div class="reading-label reading-label-curr">${T('currReading')}</div>
         <input class="reading-input${prevErr?' error':''}" type="number" id="home-curr-${home.id}" placeholder="e.g. 1675" min="0" step="0.1" inputmode="decimal"/>
       </div>
     </div>
     <div class="usage-bar-wrap">
       <div class="usage-bar-header">
-        <span class="usage-kwh" id="hkwh-${home.id}">${kwh>0?kwh.toFixed(2)+' kWh used':'—'}</span>
+        <span class="usage-kwh" id="hkwh-${home.id}">${kwh>0?T('kwhUsed',kwh.toFixed(2)):'—'}</span>
         <span class="usage-pct" id="hpct-${home.id}">${pct>0?pct.toFixed(1)+'%':'0%'}</span>
       </div>
       <div class="usage-bar">
@@ -1465,7 +1476,7 @@ function renderHomeCardHTML(home, idx = 0) {
     </div>
     <div class="home-amount">
       <div>
-        <div class="amount-label">Amount to Pay</div>
+        <div class="amount-label">${T('amountLabel')}</div>
       </div>
       <div class="amount-value" id="hamount-${home.id}"><span class="etb">ETB</span>${amt>0?formatNum(amt):'—'}</div>
     </div>
@@ -1483,10 +1494,10 @@ function updateHomeCard(id) {
   const prevErr = home.prevReading !== '' && home.currReading !== '' && parseFloat(home.currReading) < parseFloat(home.prevReading);
 
   const usageEl = document.getElementById(`husage-${id}`);
-  if (usageEl) usageEl.textContent = kwh>0?`${kwh.toFixed(1)} kWh`:'No reading';
+  if (usageEl) usageEl.textContent = kwh>0?`${kwh.toFixed(1)} kWh`:T('noReading');
 
   const kwEl = document.getElementById(`hkwh-${id}`);
-  if (kwEl) kwEl.textContent = kwh>0?`${kwh.toFixed(2)} kWh used`:'—';
+  if (kwEl) kwEl.textContent = kwh>0?T('kwhUsed',kwh.toFixed(2)):'—';
 
   const pctEl = document.getElementById(`hpct-${id}`);
   if (pctEl) pctEl.textContent = pct>0?`${pct.toFixed(1)}%`:'0%';
@@ -1521,11 +1532,11 @@ function updateHomeBar(id) {
   const pctEl = document.getElementById(`hpct-${id}`);
   if (pctEl) pctEl.textContent = `${pct.toFixed(1)}%`;
   const kwEl = document.getElementById(`hkwh-${id}`);
-  if (kwEl) kwEl.textContent = kwh>0?`${kwh.toFixed(2)} kWh used`:'—';
+  if (kwEl) kwEl.textContent = kwh>0?T('kwhUsed',kwh.toFixed(2)):'—';
   const amtEl = document.getElementById(`hamount-${id}`);
   if (amtEl) amtEl.innerHTML = `<span class="etb">ETB</span>${amt>0?formatNum(amt):'—'}`;
   const usageEl = document.getElementById(`husage-${id}`);
-  if (usageEl) usageEl.textContent = kwh>0?`${kwh.toFixed(1)} kWh`:'No reading';
+  if (usageEl) usageEl.textContent = kwh>0?`${kwh.toFixed(1)} kWh`:T('noReading');
 }
 
 // ─────────────────────────────────────────────
@@ -1539,7 +1550,7 @@ function uploadAvatar(id) {
 function onAvatarFileChange(id, input) {
   if (!input.files || !input.files[0]) return;
   const file = input.files[0];
-  if (!file.type.startsWith('image/')) { showToast('⚠ Please select an image file'); return; }
+  if (!file.type.startsWith('image/')) { showToast(T('toast_imgOnly')); return; }
   resizeImageToBase64(file, 120, (dataUrl) => {
     const home = homes.find(h => h.id === id);
     if (!home) return;
@@ -1558,7 +1569,7 @@ function onAvatarFileChange(id, input) {
       img.alt = home.name;
       avatarEl.insertBefore(img, avatarEl.firstChild);
     }
-    showToast('🖼 Photo updated!');
+    showToast(T('toast_photoUpdated'));
   });
   // reset so same file can be re-selected
   input.value = '';
@@ -1615,12 +1626,12 @@ function calculate() {
   if (!bill || bill <= 0) {
     billErr.classList.add('show');
     billEl.focus();
-    showToast('⚠ Enter the total EEU bill amount');
+    showToast(T('toast_enterBill'));
     return;
   }
   billErr.classList.remove('show');
 
-  if (!homes.length) { showToast('⚠ Add at least one home'); return; }
+  if (!homes.length) { showToast(T('toast_addHome')); return; }
 
   // Validate readings
   let valid = true;
@@ -1628,22 +1639,22 @@ function calculate() {
     const prev = parseFloat(h.prevReading);
     const curr = parseFloat(h.currReading);
     if (h.prevReading === '' || h.currReading === '') {
-      showToast(`⚠ ${h.name}: enter both readings`);
+      showToast(T('toast_enterBothReadings', h.name));
       valid = false; break;
     }
     if (isNaN(prev) || isNaN(curr) || prev < 0 || curr < 0) {
-      showToast(`⚠ ${h.name}: invalid reading values`);
+      showToast(T('toast_invalidReadings', h.name));
       valid = false; break;
     }
     if (curr < prev) {
-      showToast(`⚠ ${h.name}: current must be ≥ previous`);
+      showToast(T('toast_currGeqPrev', h.name));
       valid = false; break;
     }
   }
   if (!valid) return;
 
   const totalKwh = getTotalKwh();
-  if (totalKwh === 0) { showToast('⚠ Total consumption is 0 kWh'); return; }
+  if (totalKwh === 0) { showToast(T('toast_zeroKwh')); return; }
 
   const rate = bill / totalKwh;
   const results = homes.map(h => {
@@ -1664,7 +1675,7 @@ function calculate() {
   };
 
   renderResults(lastCalcResults);
-  showToast('✅ Calculation complete!');
+  showToast(T('toast_calcDone'));
 
   // Promote current → previous for next cycle, unlock homes ready for next entry
   homes.forEach(h => {
@@ -1699,8 +1710,8 @@ function renderResults(data) {
         <div class="result-avatar" style="overflow:hidden;flex-shrink:0">${r.photo ? `<img src="${r.photo}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;display:block"/>` : `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg>`}</div>
         <div class="result-info">
           <div class="result-name">${escHtml(r.name)}
-            ${isHigh?'<span class="badge high" style="margin-left:5px">🔥 Most</span>':''}
-            ${isLow?'<span class="badge low" style="margin-left:5px">✓ Least</span>':''}
+            ${isHigh?`<span class="badge high" style="margin-left:5px">${T('badgeMost')}</span>`:''}
+            ${isLow?`<span class="badge low" style="margin-left:5px">${T('badgeLeast')}</span>`:''}
           </div>
           <div class="result-sub">${r.kwh.toFixed(2)} kWh · ${r.pct.toFixed(1)}% · ${(r.prevReading||0)} → ${(r.currReading||0)}</div>
         </div>
@@ -1728,26 +1739,26 @@ function formatDateShort(d) {
 function buildResultsText(data) {
   const monthLabel = data.month ? formatMonth(data.month) : '';
   const dateStr = formatDateShort(data.date ? new Date(data.date) : new Date());
-  let txt = `⚡ FairSplit — EEU Bill Summary\n`;
+  let txt = `${T('copyHeader')}\n`;
   if (monthLabel) txt += `📅 ${monthLabel}\n`;
-  txt += `🗓 Date: ${dateStr}\n`;
-  txt += `💰 Total Bill: ETB ${formatNum(data.bill)}\n`;
-  txt += `📊 Total Usage: ${data.totalKwh.toFixed(2)} kWh\n\n`;
+  txt += `🗓 ${T('copyDate')}: ${dateStr}\n`;
+  txt += `💰 ${T('copyTotal')}: ETB ${formatNum(data.bill)}\n`;
+  txt += `📊 ${T('copyUsage')}: ${data.totalKwh.toFixed(2)} kWh\n\n`;
   data.results.forEach(r => {
     txt += `🏠 ${r.name}\n`;
-    txt += `   Usage: ${r.kwh.toFixed(2)} kWh (${r.pct.toFixed(1)}%)\n`;
-    txt += `   Pays: ETB ${formatNum(r.amt)}\n\n`;
+    txt += `   ${T('copyUsageLabel')}: ${r.kwh.toFixed(2)} kWh (${r.pct.toFixed(1)}%)\n`;
+    txt += `   ${T('copyPays')}: ETB ${formatNum(r.amt)}\n\n`;
   });
-  if (data.note) txt += `📝 Note: ${data.note}\n`;
-  txt += `\n— Shared via FairSplit`;
+  if (data.note) txt += `📝 ${T('copyNote')}: ${data.note}\n`;
+  txt += `\n${T('copyFooter')}`;
   return txt;
 }
 
 function copyResults() {
-  if (!lastCalcResults) { showToast('⚠ Calculate first'); return; }
+  if (!lastCalcResults) { showToast(T('toast_calcFirst')); return; }
   const btn = document.querySelector('.action-btn[onclick*="copyResults"]');
   copyToClipboard(buildResultsText(lastCalcResults)).then(ok => {
-    showToast(ok ? '📋 Results copied!' : '⚠ Copy failed — try Share instead');
+    showToast(ok ? T('toast_copied') : T('toast_copyFailed'));
     if (ok && btn) {
       // Swap to success state
       const originalHTML = btn.innerHTML;
@@ -1812,11 +1823,11 @@ function resetAll() {
   saveState();
   renderHomes();
   updateLiveStats();
-  document.getElementById('resultsList').innerHTML = `<div class="empty-state"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M18 20V10M12 20V4M6 20v-6"/></svg><p>Enter bill details and tap<br/><strong>Calculate Fair Split</strong></p></div>`;
+  document.getElementById('resultsList').innerHTML = `<div class="empty-state"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M18 20V10M12 20V4M6 20v-6"/></svg><p>${T('emptyState')}</p></div>`;
   closeModal('resetModal');
   const inputBtn = document.querySelector('.tab-btn[onclick*="input"]');
   if (inputBtn) switchTab('input', inputBtn);
-  setTimeout(() => showToast('♻ Reset complete'), 320);
+  setTimeout(() => showToast(T('toast_reset')), 320);
 }
 
 // ─────────────────────────────────────────────
@@ -2280,7 +2291,7 @@ async function checkUserAccess() {
 <!-- ═══════════ CONTACT INFO ═══════════ -->
 <section class="card" style="padding:14px;margin-bottom:14px;margin:14px 16px">
 
-  <div class="card-title" style="margin-bottom:10px">
+  <div class="card-title" id="contactTitle" style="margin-bottom:10px">
     📞 Contact
   </div>
 
@@ -2297,7 +2308,7 @@ async function checkUserAccess() {
       border-radius:12px;
       padding:10px 12px;
     ">
-      <div style="color:var(--text-3);font-size:.58rem;margin-bottom:2px">
+      <div style="color:var(--text-3);font-size:.58rem;margin-bottom:2px" id="devLabel">
         Developer
       </div>
       <div style="font-weight:700">FairSplitTeam</div>
@@ -2312,8 +2323,8 @@ async function checkUserAccess() {
       padding:10px 12px;
       display:block;
     ">
-      <div style="color:var(--text-3);font-size:.58rem;margin-bottom:2px">
-         Call Now
+      <div style="color:var(--text-3);font-size:.58rem;margin-bottom:2px" id="callLabel">
+        Tap to call
       </div>
       <div style="font-weight:800;color:var(--amber)">
         +251799217580
@@ -2324,5 +2335,320 @@ async function checkUserAccess() {
 
 </section>
 
+<script>
+// ═══════════════════════════════════════════
+//  AMHARIC / ENGLISH  INTERNATIONALISATION
+// ═══════════════════════════════════════════
+const STRINGS = {
+  en: {
+    headerSub:'EEU Bill Splitter',
+    tabInput:'Input', tabResults:'Results',
+    totalBillTitle:'Total EEU Bill',
+    labelMonth:'📅 Billing Month', labelNotes:'📝 Notes',
+    notePlaceholder:'Optional note',
+    billError:'⚠ Please enter a valid bill amount',
+    statKwh:'Total kWh', statHomes:'Homes',
+    homesTitle:'Homes / Sub-Meters', addHome:'Add Home',
+    calcBtn:'⚡ Calculate Fair Split',
+    copyResults:'Copy Results',
+    emptyState:'Enter bill details and tap<br/><strong>Calculate Fair Split</strong><br/>to see results',
+    noHomesMsg:'No homes added yet.<br/>Tap <strong>Add Home</strong> to begin.',
+    resetTitle:'Reset Everything?',
+    resetSub:'This will clear all homes, readings, and bill data. This cannot be undone.',
+    cancel:'Cancel', resetBtn:'Reset',
+    deleteTitle:'Remove Home?', deleteMsg:'Remove this home from the list?', removeBtn:'Remove',
+    editTitle:'Edit Home', editNamePlaceholder:'Home name (e.g. House 1)', saveBtn:'Save',
+    editPrevTitle:'Edit Previous Data?', editAnywayBtn:'Edit Anyway',
+    prevReading:'📊 Prev Reading (kWh)', prevReadingLocked:'🔒 Prev Reading (kWh)',
+    currReading:'⚡ Curr Reading (kWh)',
+    amountLabel:'Amount to Pay', noReading:'No reading',
+    kwhUsed:(k)=>`${k} kWh used`, lockedChip:'🔒 Locked',
+    offlineTitle:'YOU ARE OFFLINE',
+    offlineSub:'Grace period active — connect within 7 days',
+    offlineExpired:'Grace period expired — connect to continue',
+    offlineUrgent:(d)=>`Only ${d} day${d!==1?'s':''} left — connect soon!`,
+    offlineNormal:(d)=>`Grace period active — connect within ${d} days`,
+    offlineDaysLeft:(d)=>`${d}d left`, offlineBadgeExpired:'Expired',
+    whatTitle:'⚡ What is FairSplit?',
+    whatDesc:'FairSplit helps households sharing a single EEU electricity meter split the monthly bill <strong style="color:var(--text-1)">fairly and accurately</strong> — based on each home\'s actual kWh consumption, not a flat split.',
+    howTitle:'📋 How It Works',
+    step1Title:'Enter the Total Bill', step1Desc:'Type the full EEU bill amount for the billing month.',
+    step2Title:'Add Each Home', step2Desc:'Add every sub-meter with its previous and current kWh readings.',
+    step3Title:'Calculate Fair Split', step3Desc:'Tap the button — each home pays exactly for what they consumed.',
+    step4Title:'Copy & Share', step4Desc:'Copy the results and send via WhatsApp or Telegram in one tap.',
+    featTitle:'✨ Key Features', devTitle:'Developer', gotIt:'Got It',
+    contactTitle:'📞 Contact', devLabel:'Developer', callLabel:'Tap to call',
+    toast_maxHomes:'⚡ Maximum 10 homes allowed',
+    toast_homeRemoved:'🗑 Home removed',
+    toast_nameEmpty:'⚠ Name cannot be empty',
+    toast_homeRenamed:'✓ Home renamed',
+    toast_homeLocked:'🔒 Home locked', toast_homeUnlocked:'🔓 Home unlocked',
+    toast_enterBill:'⚠ Enter the total EEU bill amount',
+    toast_addHome:'⚠ Add at least one home',
+    toast_enterBothReadings:(n)=>`⚠ ${n}: enter both readings`,
+    toast_invalidReadings:(n)=>`⚠ ${n}: invalid reading values`,
+    toast_currGeqPrev:(n)=>`⚠ ${n}: current must be ≥ previous`,
+    toast_zeroKwh:'⚠ Total consumption is 0 kWh',
+    toast_calcDone:'✅ Calculation complete!',
+    toast_imgOnly:'⚠ Please select an image file',
+    toast_photoUpdated:'🖼 Photo updated!',
+    toast_calcFirst:'⚠ Calculate first',
+    toast_copied:'📋 Results copied!',
+    toast_copyFailed:'⚠ Copy failed — try Share instead',
+    toast_reset:'♻ Reset complete',
+    defaultNames:['House 1','House 2','House 3','House 4','House 5','House 6','House 7','House 8','House 9','House 10'],
+    copyHeader:'⚡ FairSplit — EEU Bill Summary',
+    copyDate:'Date', copyTotal:'Total Bill', copyUsage:'Total Usage',
+    copyPays:'Pays', copyUsageLabel:'Usage', copyNote:'Note',
+    copyFooter:'— Shared via FairSplit',
+    badgeMost:'🔥 Most', badgeLeast:'✓ Least',
+  },
+  am: {
+    headerSub:'የኤሌክትሪክ ሂሳብ አካፋይ',
+    tabInput:'ግብዓት', tabResults:'ውጤቶች',
+    totalBillTitle:'ጠቅላላ የኤሌክትሪክ ሂሳብ',
+    labelMonth:'📅 የሂሳብ ወር', labelNotes:'📝 ማስታወሻ',
+    notePlaceholder:'አማራጭ ማስታወሻ',
+    billError:'⚠ ትክክለኛ የሂሳብ መጠን ያስገቡ',
+    statKwh:'ጠቅላላ kWh', statHomes:'ቤቶች',
+    homesTitle:'ቤቶች / ንዑስ ሜትሮች', addHome:'ቤት ጨምር',
+    calcBtn:'⚡ ፍትሃዊ ክፍፍል አስላ',
+    copyResults:'ውጤቶችን ቅዳ',
+    emptyState:'የሂሳብ ዝርዝሮችን ያስገቡና<br/><strong>ፍትሃዊ ክፍፍል አስላ</strong><br/>ይጫኑ',
+    noHomesMsg:'ቤቶች አልተጨመሩም።<br/><strong>ቤት ጨምር</strong> ይጫኑ።',
+    resetTitle:'ሁሉንም ዳግም ማስጀመር?',
+    resetSub:'ይህ ሁሉንም ቤቶች፣ ንባቦችና የሂሳብ መረጃ ያጸዳል። ሊቀለበስ አይችልም።',
+    cancel:'ሰርዝ', resetBtn:'ዳግም አስጀምር',
+    deleteTitle:'ቤት ያስወግዱ?', deleteMsg:'ይህን ቤት ከዝርዝሩ ያስወግዱ?', removeBtn:'አስወግድ',
+    editTitle:'ቤት አርትዕ', editNamePlaceholder:'የቤት ስም (ለምሳሌ ቤት 1)', saveBtn:'አስቀምጥ',
+    editPrevTitle:'ቀደሚ ውሂብ ያርትዑ?', editAnywayBtn:'ቢሆንም ያርትዑ',
+    prevReading:'📊 ቀዳሚ ንባብ (kWh)', prevReadingLocked:'🔒 ቀዳሚ ንባብ (kWh)',
+    currReading:'⚡ አሁናዊ ንባብ (kWh)',
+    amountLabel:'የሚከፈል መጠን', noReading:'ንባብ የለም',
+    kwhUsed:(k)=>`${k} kWh ጥቅም ላይ ዋለ`, lockedChip:'🔒 ተቆልፏል',
+    offlineTitle:'ከኢንተርኔት ተቋርጠዋል',
+    offlineSub:'የጸጋ ጊዜ ንቁ ነው — ውስጥ 7 ቀናት ያገናኙ',
+    offlineExpired:'የጸጋ ጊዜ አልቋል — ለመቀጠል ያገናኙ',
+    offlineUrgent:(d)=>`${d} ቀን ብቻ ቀርቷል — ቶሎ ያገናኙ!`,
+    offlineNormal:(d)=>`የጸጋ ጊዜ ንቁ ነው — ውስጥ ${d} ቀናት ያገናኙ`,
+    offlineDaysLeft:(d)=>`${d} ቀን ቀሪ`, offlineBadgeExpired:'አልቋል',
+    whatTitle:'⚡ ፌርስፕሊት ምንድን ነው?',
+    whatDesc:'ፌርስፕሊት አንድ የኤሌክትሪክ ሜትር የሚጋሩ ቤቶች ወርሃዊ ሂሳባቸውን <strong style="color:var(--text-1)">ፍትሃዊ እና ትክክለኛ</strong> ሆኖ እንዲከፋፈሉ ይረዳቸዋል — ከእያንዳንዱ ቤት ትክክለኛ kWh ፍጆታ ላይ ተመስርቶ።',
+    howTitle:'📋 እንዴት ይሠራል',
+    step1Title:'ጠቅላላ ሂሳቡን ያስገቡ', step1Desc:'ለሂሳቡ ወር ሙሉ የኤሌክትሪክ ሂሳብ መጠን ያስገቡ።',
+    step2Title:'እያንዳንዱን ቤት ጨምሩ', step2Desc:'ቀዳሚ እና አሁናዊ kWh ንባቦቻቸው ጋር እያንዳንዱ ንዑስ ሜትር ጨምሩ።',
+    step3Title:'ፍትሃዊ ክፍፍል አስሉ', step3Desc:'አዝራሩን ይጫኑ — እያንዳንዱ ቤት ለፈጀው ብቻ ይከፍላል።',
+    step4Title:'ቅዱ እና ያጋሩ', step4Desc:'ውጤቶቹን ቅዱ እና በዋትስአፕ ወይም ቴሌግራም ላይ ያጋሩ።',
+    featTitle:'✨ ዋና ባህሪያት', devTitle:'ገንቢ', gotIt:'ገባኝ',
+    contactTitle:'📞 ያግኙን', devLabel:'ገንቢ', callLabel:'ለመደወል ይጫኑ',
+    toast_maxHomes:'⚡ ከፍተኛ 10 ቤቶች ይፈቀዳሉ',
+    toast_homeRemoved:'🗑 ቤት ተወግዷል',
+    toast_nameEmpty:'⚠ ስም ባዶ ሊሆን አይችልም',
+    toast_homeRenamed:'✓ ቤት ተሰይሟል',
+    toast_homeLocked:'🔒 ቤት ተቆልፏል', toast_homeUnlocked:'🔓 ቤት ተከፍቷል',
+    toast_enterBill:'⚠ ጠቅላላ የሂሳብ መጠን ያስገቡ',
+    toast_addHome:'⚠ ቢያንስ አንድ ቤት ጨምሩ',
+    toast_enterBothReadings:(n)=>`⚠ ${n}: ሁለቱንም ንባቦች ያስገቡ`,
+    toast_invalidReadings:(n)=>`⚠ ${n}: ልክ ያልሆኑ ዋጋዎች`,
+    toast_currGeqPrev:(n)=>`⚠ ${n}: አሁናዊ ≥ ቀዳሚ መሆን አለበት`,
+    toast_zeroKwh:'⚠ ጠቅላላ ፍጆታ 0 kWh ነው',
+    toast_calcDone:'✅ ስሌቱ ተጠናቋል!',
+    toast_imgOnly:'⚠ እባክዎ የምስል ፋይል ይምረጡ',
+    toast_photoUpdated:'🖼 ፎቶ ተዘምኗል!',
+    toast_calcFirst:'⚠ ቅድሚያ ያስሉ',
+    toast_copied:'📋 ውጤቶች ተቀድተዋል!',
+    toast_copyFailed:'⚠ ቅዳ አልተሳካም',
+    toast_reset:'♻ ዳግም ማስጀመር ተጠናቋል',
+    defaultNames:['ቤት 1','ቤት 2','ቤት 3','ቤት 4','ቤት 5','ቤት 6','ቤት 7','ቤት 8','ቤት 9','ቤት 10'],
+    copyHeader:'⚡ ፌርስፕሊት — የኤሌክትሪክ ሂሳብ ማጠቃለያ',
+    copyDate:'ቀን', copyTotal:'ጠቅላላ ሂሳብ', copyUsage:'ጠቅላላ ፍጆታ',
+    copyPays:'ይከፍላል', copyUsageLabel:'ፍጆታ', copyNote:'ማስታወሻ',
+    copyFooter:'— በፌርስፕሊት ተጋርቷል',
+    badgeMost:'🔥 ከፍተኛ', badgeLeast:'✓ ዝቅተኛ',
+  }
+};
+
+let currentLang = localStorage.getItem('fs_lang') || 'en';
+
+function T(key, ...args) {
+  const s = STRINGS[currentLang] || STRINGS.en;
+  const val = s[key] !== undefined ? s[key] : (STRINGS.en[key] ?? key);
+  return typeof val === 'function' ? val(...args) : val;
+}
+
+function toggleLang() {
+  currentLang = currentLang === 'en' ? 'am' : 'en';
+  localStorage.setItem('fs_lang', currentLang);
+  const btn = document.getElementById('langBtn');
+  if (btn) btn.textContent = currentLang === 'en' ? 'አማ' : 'EN';
+  applyLang();
+}
+
+function applyLang() {
+  const s = STRINGS[currentLang];
+  // Header subtitle
+  const hs = document.querySelector('.header-sub'); if (hs) hs.textContent = s.headerSub;
+  // About modal header subtitle
+  document.querySelectorAll('[data-about-sub]').forEach(el => el.textContent = s.headerSub);
+
+  // Tabs
+  const tabs = document.querySelectorAll('.tab-btn');
+  if (tabs[0]) tabs[0].textContent = s.tabInput;
+  if (tabs[1]) tabs[1].textContent = s.tabResults;
+
+  // Total bill card title (has an SVG child)
+  document.querySelectorAll('.card-title').forEach(el => {
+    const txt = el.textContent.trim();
+    if (txt.includes('Total EEU Bill') || txt.includes('ጠቅላላ')) {
+      const svg = el.querySelector('svg');
+      el.innerHTML = '';
+      if (svg) el.appendChild(svg);
+      el.append(' ' + s.totalBillTitle);
+    }
+  });
+
+  // Form labels
+  const lblMonth = document.querySelector('label[for="billingMonth"], .form-label');
+  document.querySelectorAll('.form-label').forEach(el => {
+    if (el.textContent.includes('Billing Month') || el.textContent.includes('የሂሳብ ወር')) el.textContent = s.labelMonth;
+    if (el.textContent.includes('Notes') || el.textContent.includes('ማስታወሻ')) el.textContent = s.labelNotes;
+  });
+
+  // Note placeholder
+  const noteInput = document.getElementById('billingNote');
+  if (noteInput) noteInput.placeholder = s.notePlaceholder;
+
+  // Bill error
+  const billErr = document.getElementById('billError');
+  if (billErr) billErr.textContent = s.billError;
+
+  // Stat labels
+  const statLabels = document.querySelectorAll('.stat-lbl');
+  if (statLabels[0]) statLabels[0].textContent = s.statKwh;
+  if (statLabels[1]) statLabels[1].textContent = s.statHomes;
+
+  // Homes header title
+  const homesTitle = document.querySelector('.homes-title');
+  if (homesTitle) {
+    const svg = homesTitle.querySelector('svg');
+    homesTitle.innerHTML = '';
+    if (svg) homesTitle.appendChild(svg);
+    homesTitle.append(' ' + s.homesTitle);
+  }
+
+  // Add home button
+  const addBtn = document.querySelector('.add-home-btn');
+  if (addBtn) {
+    const svg = addBtn.querySelector('svg');
+    addBtn.innerHTML = '';
+    if (svg) addBtn.appendChild(svg);
+    addBtn.append(' ' + s.addHome);
+  }
+
+  // Calc button
+  const calcBtn = document.querySelector('.calc-btn');
+  if (calcBtn) calcBtn.textContent = s.calcBtn;
+
+  // Copy results button
+  const copyBtn = document.querySelector('.action-btn[onclick*="copyResults"]');
+  if (copyBtn) {
+    const svg = copyBtn.querySelector('svg');
+    copyBtn.innerHTML = '';
+    if (svg) copyBtn.appendChild(svg);
+    copyBtn.append(' ' + s.copyResults);
+  }
+
+  // Empty state
+  const emptyP = document.querySelector('#resultsList .empty-state p');
+  if (emptyP) emptyP.innerHTML = s.emptyState;
+
+  // Reset modal
+  const rTit = document.querySelector('#resetModal .modal-title'); if (rTit) rTit.textContent = s.resetTitle;
+  const rSub = document.querySelector('#resetModal .modal-sub'); if (rSub) rSub.textContent = s.resetSub;
+  const rBtns = document.querySelectorAll('#resetModal .modal-btn');
+  if (rBtns[0]) rBtns[0].textContent = s.cancel;
+  if (rBtns[1]) rBtns[1].textContent = s.resetBtn;
+
+  // Delete modal
+  const dTit = document.querySelector('#deleteHomeModal .modal-title'); if (dTit) dTit.textContent = s.deleteTitle;
+  const dBtns = document.querySelectorAll('#deleteHomeModal .modal-btn');
+  if (dBtns[0]) dBtns[0].textContent = s.cancel;
+  if (dBtns[1]) dBtns[1].textContent = s.removeBtn;
+
+  // Edit modal
+  const eTit = document.querySelector('#editHomeModal .modal-title'); if (eTit) eTit.textContent = s.editTitle;
+  const eInp = document.getElementById('editHomeName'); if (eInp) eInp.placeholder = s.editNamePlaceholder;
+  const eBtns = document.querySelectorAll('#editHomeModal .modal-btn');
+  if (eBtns[0]) eBtns[0].textContent = s.cancel;
+  if (eBtns[1]) eBtns[1].textContent = s.saveBtn;
+
+  // Edit prev data modal
+  const epTit = document.querySelector('#editPrevDataModal .modal-title');
+  if (epTit) epTit.innerHTML = `<span style="font-size:1.3rem">⚠️</span> ${s.editPrevTitle}`;
+  const epBtns = document.querySelectorAll('#editPrevDataModal .modal-btn');
+  if (epBtns[0]) epBtns[0].textContent = s.cancel;
+  if (epBtns[1]) epBtns[1].textContent = s.editAnywayBtn;
+
+  // Offline banner title
+  const offTit = document.querySelector('#offlineBanner [style*="font-weight:700"]');
+  if (offTit) offTit.textContent = s.offlineTitle;
+
+  // About modal content
+  _applyAboutLang(s);
+
+  // Contact section
+  const cTit = document.getElementById('contactTitle'); if (cTit) cTit.textContent = s.contactTitle;
+  const dLbl = document.getElementById('devLabel'); if (dLbl) dLbl.textContent = s.devLabel;
+  const cLbl = document.getElementById('callLabel'); if (cLbl) cLbl.textContent = s.callLabel;
+
+  // Re-render homes with new lang
+  renderHomes();
+}
+
+function _applyAboutLang(s) {
+  const sections = document.querySelectorAll('#aboutModal [style*="background:var(--bg-card2)"]');
+  // Section 0: What is FairSplit
+  if (sections[0]) {
+    const t = sections[0].querySelector('[style*="color:var(--amber)"]');
+    const d = sections[0].querySelector('[style*="font-size:.8rem"]');
+    if (t) t.textContent = s.whatTitle;
+    if (d) d.innerHTML = s.whatDesc;
+  }
+  // Section 1: How It Works
+  if (sections[1]) {
+    const t = sections[1].querySelector('[style*="color:var(--amber)"]');
+    if (t) t.textContent = s.howTitle;
+    const steps = sections[1].querySelectorAll('[style*="display:flex;gap:12px"]');
+    const data = [{t:s.step1Title,d:s.step1Desc},{t:s.step2Title,d:s.step2Desc},{t:s.step3Title,d:s.step3Desc},{t:s.step4Title,d:s.step4Desc}];
+    steps.forEach((step,i) => {
+      if (!data[i]) return;
+      const ti = step.querySelector('div > div:first-child');
+      const di = step.querySelector('div > div:last-child');
+      if (ti) ti.textContent = data[i].t;
+      if (di) di.textContent = data[i].d;
+    });
+  }
+  // Section 2: Key Features title
+  if (sections[2]) {
+    const t = sections[2].querySelector('[style*="color:var(--amber)"]');
+    if (t) t.textContent = s.featTitle;
+  }
+  // Section 3: Developer label
+  if (sections[3]) {
+    const t = sections[3].querySelector('[style*="color:var(--text-3)"]');
+    if (t) t.textContent = s.devTitle;
+  }
+  // Got It button
+  const gotBtn = document.querySelector('#aboutModal .modal-btn.confirm');
+  if (gotBtn) gotBtn.textContent = s.gotIt;
+}
+
+// Run on DOMContentLoaded
+document.addEventListener('DOMContentLoaded', () => {
+  const btn = document.getElementById('langBtn');
+  if (btn) btn.textContent = currentLang === 'en' ? 'አማ' : 'EN';
+  applyLang();
+});
+</script>
 </body>
 </html>
